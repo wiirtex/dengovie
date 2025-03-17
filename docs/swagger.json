@@ -1,0 +1,216 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "This is a sample server celler server.",
+        "title": "Swagger Example API",
+        "termsOfService": "http://swagger.io/terms/",
+        "contact": {
+            "name": "API Support",
+            "url": "http://www.swagger.io/support",
+            "email": "support@swagger.io"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
+        "version": "1.0"
+    },
+    "host": "localhost:8080",
+    "basePath": "/api/v1",
+    "paths": {
+        "/auth/login": {
+            "post": {
+                "description": "login-with-otp-code",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Зайти с telegramAlias и коду. На время тестирования подходит 111",
+                "parameters": [
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dengovie.LoginRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "данные невалидные",
+                        "schema": {
+                            "$ref": "#/definitions/web.APIError"
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/request_code": {
+            "post": {
+                "description": "request-otp-code",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Запросить код для входа",
+                "parameters": [
+                    {
+                        "description": "telegramAlias",
+                        "name": "telegramAlias",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ok, код отправлен",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "данные невалидные",
+                        "schema": {
+                            "$ref": "#/definitions/web.APIError"
+                        }
+                    },
+                    "404": {
+                        "description": "клиент не зарегистрирован в боте",
+                        "schema": {
+                            "$ref": "#/definitions/web.APIError"
+                        }
+                    }
+                }
+            }
+        },
+        "/groups": {
+            "get": {
+                "description": "list-user-groups",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Вернуть список групп пользователя, в которых он состоит",
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "невалидный запрос",
+                        "schema": {
+                            "$ref": "#/definitions/web.APIError"
+                        }
+                    },
+                    "404": {
+                        "description": "клиент не найден",
+                        "schema": {
+                            "$ref": "#/definitions/web.APIError"
+                        }
+                    }
+                }
+            }
+        },
+        "/groups/{groupID}/users": {
+            "get": {
+                "description": "list-users-in-group",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Список юзеров в группе",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "groupID",
+                        "name": "groupID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "невалидный запрос",
+                        "schema": {
+                            "$ref": "#/definitions/web.APIError"
+                        }
+                    },
+                    "404": {
+                        "description": "группа не найдена",
+                        "schema": {
+                            "$ref": "#/definitions/web.APIError"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "dengovie.LoginRequest": {
+            "type": "object",
+            "properties": {
+                "alias": {
+                    "type": "string"
+                },
+                "otp": {
+                    "type": "string"
+                }
+            }
+        },
+        "web.APIError": {
+            "type": "object",
+            "properties": {
+                "errorReason": {
+                    "$ref": "#/definitions/web.ErrorReason"
+                }
+            }
+        },
+        "web.ErrorReason": {
+            "type": "string",
+            "enum": [
+                "telegram_not_found",
+                "invalid_otp"
+            ],
+            "x-enum-varnames": [
+                "TelegramNotFound",
+                "InvalidOTP"
+            ]
+        }
+    },
+    "securityDefinitions": {
+        "BasicAuth": {
+            "type": "basic"
+        }
+    },
+    "externalDocs": {
+        "description": "OpenAPI",
+        "url": "https://swagger.io/resources/open-api/"
+    }
+}

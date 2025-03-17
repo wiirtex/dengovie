@@ -1,0 +1,143 @@
+basePath: /api/v1
+definitions:
+  dengovie.LoginRequest:
+    properties:
+      alias:
+        type: string
+      otp:
+        type: string
+    type: object
+  web.APIError:
+    properties:
+      errorReason:
+        $ref: '#/definitions/web.ErrorReason'
+    type: object
+  web.ErrorReason:
+    enum:
+    - telegram_not_found
+    - invalid_otp
+    type: string
+    x-enum-varnames:
+    - TelegramNotFound
+    - InvalidOTP
+externalDocs:
+  description: OpenAPI
+  url: https://swagger.io/resources/open-api/
+host: localhost:8080
+info:
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: This is a sample server celler server.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Swagger Example API
+  version: "1.0"
+paths:
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      description: login-with-otp-code
+      parameters:
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/dengovie.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+        "400":
+          description: данные невалидные
+          schema:
+            $ref: '#/definitions/web.APIError'
+      summary: Зайти с telegramAlias и коду. На время тестирования подходит 111
+  /auth/request_code:
+    post:
+      consumes:
+      - application/json
+      description: request-otp-code
+      parameters:
+      - description: telegramAlias
+        in: body
+        name: telegramAlias
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok, код отправлен
+          schema:
+            type: string
+        "400":
+          description: данные невалидные
+          schema:
+            $ref: '#/definitions/web.APIError'
+        "404":
+          description: клиент не зарегистрирован в боте
+          schema:
+            $ref: '#/definitions/web.APIError'
+      summary: Запросить код для входа
+  /groups:
+    get:
+      consumes:
+      - application/json
+      description: list-user-groups
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+        "400":
+          description: невалидный запрос
+          schema:
+            $ref: '#/definitions/web.APIError'
+        "404":
+          description: клиент не найден
+          schema:
+            $ref: '#/definitions/web.APIError'
+      summary: Вернуть список групп пользователя, в которых он состоит
+  /groups/{groupID}/users:
+    get:
+      consumes:
+      - application/json
+      description: list-users-in-group
+      parameters:
+      - description: groupID
+        in: path
+        name: groupID
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+        "400":
+          description: невалидный запрос
+          schema:
+            $ref: '#/definitions/web.APIError'
+        "404":
+          description: группа не найдена
+          schema:
+            $ref: '#/definitions/web.APIError'
+      summary: Список юзеров в группе
+securityDefinitions:
+  BasicAuth:
+    type: basic
+swagger: "2.0"

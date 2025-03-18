@@ -3,6 +3,7 @@ package main
 import (
 	"dengovie/internal/app/dengovie"
 	"dengovie/internal/app/middlewares"
+	"dengovie/internal/service/debts"
 	"dengovie/internal/store/postgres"
 	"fmt"
 	"github.com/gin-gonic/gin"
@@ -49,7 +50,9 @@ func main() {
 		log.Fatal(fmt.Errorf("postgres.New: %w", err))
 	}
 
-	c := dengovie.NewController(storage)
+	debtsService := debts.New(storage)
+
+	c := dengovie.NewController(storage, debtsService)
 
 	v1 := r.Group("/api/v1")
 	{
@@ -61,7 +64,6 @@ func main() {
 
 		groups := v1.Group("/groups")
 		{
-			// TODO: check authorization
 			groups.Use(middlewares.CheckAuth)
 			groups.GET("", c.ListUserGroups)
 			groups.GET("/:groupID/users", c.ListUsersInGroup)
@@ -69,14 +71,16 @@ func main() {
 
 		user := v1.Group("/user")
 		{
+			user.Use(middlewares.CheckAuth)
 			user.GET("", func(context *gin.Context) { /**/ })
 		}
 
-		debts := v1.Group("/debts")
+		debtsHandler := v1.Group("/debts")
 		{
-			debts.GET("", func(context *gin.Context) {})
-			debts.POST("share", func(context *gin.Context) {})
-			debts.POST("pay", func(context *gin.Context) {})
+			debtsHandler.Use(middlewares.CheckAuth)
+			debtsHandler.GET("", c.ListDebts)
+			debtsHandler.POST("share", c.ShareDebt)
+			debtsHandler.POST("pay", func(context *gin.Context) {})
 		}
 	}
 

@@ -104,6 +104,69 @@ const docTemplate = `{
                 }
             }
         },
+        "/debts": {
+            "get": {
+                "description": "list-user-groups",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Список всех долгов юзера, в которых он состоит",
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "$ref": "#/definitions/dengovie.ListDebtsResponseBody"
+                        }
+                    },
+                    "400": {
+                        "description": "невалидный запрос",
+                        "schema": {
+                            "$ref": "#/definitions/web.APIError"
+                        }
+                    },
+                    "404": {
+                        "description": "клиент не найден",
+                        "schema": {
+                            "$ref": "#/definitions/web.APIError"
+                        }
+                    }
+                }
+            }
+        },
+        "/debts/share": {
+            "post": {
+                "description": "list-user-groups",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Разделить долг между пользователями",
+                "parameters": [
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dengovie.ShareDebtRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "400": {
+                        "description": "невалидный запрос",
+                        "schema": {
+                            "$ref": "#/definitions/web.APIError"
+                        }
+                    }
+                }
+            }
+        },
         "/groups": {
             "get": {
                 "description": "list-user-groups",
@@ -179,6 +242,17 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "dengovie.ListDebtsResponseBody": {
+            "type": "object",
+            "properties": {
+                "debts": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dengovie.UserDebt"
+                    }
+                }
+            }
+        },
         "dengovie.LoginRequest": {
             "type": "object",
             "properties": {
@@ -186,6 +260,37 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "otp": {
+                    "type": "string"
+                }
+            }
+        },
+        "dengovie.ShareDebtRequest": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "integer"
+                },
+                "group_id": {
+                    "type": "integer"
+                },
+                "user_ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                }
+            }
+        },
+        "dengovie.UserDebt": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "integer"
+                },
+                "another_user_id": {
+                    "type": "integer"
+                },
+                "another_user_name": {
                     "type": "string"
                 }
             }
@@ -202,11 +307,15 @@ const docTemplate = `{
             "type": "string",
             "enum": [
                 "telegram_not_found",
-                "invalid_otp"
+                "invalid_otp",
+                "debtor_not_in_group",
+                "buyer_not_in_group"
             ],
             "x-enum-varnames": [
                 "TelegramNotFound",
-                "InvalidOTP"
+                "InvalidOTP",
+                "DebtorNotInGroup",
+                "BuyerNotInGroup"
             ]
         }
     },

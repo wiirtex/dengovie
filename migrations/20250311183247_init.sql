@@ -3,23 +3,26 @@
 
 create table groups
 (
-    id   bigint primary key,
+    id   bigserial primary key,
     name text
 );
 
 create table users
 (
-    id    bigint primary key,
+    id    bigserial primary key,
     name  text,
     alias text
 );
 
 create table user_groups
 (
-    id       bigint primary key,
+    id       bigserial primary key,
     user_id  bigint,
     group_id bigint
 );
+
+create index user_groups_user_id_idx on user_groups(user_id);
+create index user_groups_group_id_idx on user_groups(group_id);
 
 -- +goose StatementEnd
 

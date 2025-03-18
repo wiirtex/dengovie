@@ -2,7 +2,7 @@ include .env
 
 
 build-n-run:
-	swag init -d cmd/dengovie,internal/app/dengovie,internal/web
+	swag init -d cmd/dengovie,internal/app/dengovie,internal/web,internal/domain
 	go run cmd/dengovie/main.go
 
 test-env-up:

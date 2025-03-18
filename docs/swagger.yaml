@@ -1,10 +1,37 @@
 basePath: /api/v1
 definitions:
+  dengovie.ListDebtsResponseBody:
+    properties:
+      debts:
+        items:
+          $ref: '#/definitions/dengovie.UserDebt'
+        type: array
+    type: object
   dengovie.LoginRequest:
     properties:
       alias:
         type: string
       otp:
+        type: string
+    type: object
+  dengovie.ShareDebtRequest:
+    properties:
+      amount:
+        type: integer
+      group_id:
+        type: integer
+      user_ids:
+        items:
+          type: integer
+        type: array
+    type: object
+  dengovie.UserDebt:
+    properties:
+      amount:
+        type: integer
+      another_user_id:
+        type: integer
+      another_user_name:
         type: string
     type: object
   web.APIError:
@@ -16,10 +43,14 @@ definitions:
     enum:
     - telegram_not_found
     - invalid_otp
+    - debtor_not_in_group
+    - buyer_not_in_group
     type: string
     x-enum-varnames:
     - TelegramNotFound
     - InvalidOTP
+    - DebtorNotInGroup
+    - BuyerNotInGroup
 externalDocs:
   description: OpenAPI
   url: https://swagger.io/resources/open-api/
@@ -89,6 +120,47 @@ paths:
           schema:
             $ref: '#/definitions/web.APIError'
       summary: Запросить код для входа
+  /debts:
+    get:
+      consumes:
+      - application/json
+      description: list-user-groups
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            $ref: '#/definitions/dengovie.ListDebtsResponseBody'
+        "400":
+          description: невалидный запрос
+          schema:
+            $ref: '#/definitions/web.APIError'
+        "404":
+          description: клиент не найден
+          schema:
+            $ref: '#/definitions/web.APIError'
+      summary: Список всех долгов юзера, в которых он состоит
+  /debts/share:
+    post:
+      consumes:
+      - application/json
+      description: list-user-groups
+      parameters:
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/dengovie.ShareDebtRequest'
+      produces:
+      - application/json
+      responses:
+        "400":
+          description: невалидный запрос
+          schema:
+            $ref: '#/definitions/web.APIError'
+      summary: Разделить долг между пользователями
   /groups:
     get:
       consumes:

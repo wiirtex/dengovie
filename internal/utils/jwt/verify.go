@@ -1,6 +1,7 @@
 package jwt
 
 import (
+	"dengovie/internal/domain"
 	"errors"
 	"fmt"
 	"github.com/golang-jwt/jwt/v5"
@@ -53,10 +54,10 @@ func VerifyJWT(tok string) (JWTData, error) {
 			return JWTData{}, errExpiredToken
 		}
 
-		fmt.Printf("claims: %v\n", claims["user_id"])
-		userID, ok := claims["user_id"].(string)
+		fmt.Printf("claims: %v\n", claims[domain.UserIDKey])
+		userID, ok := claims[domain.UserIDKey].(string)
 		if !ok {
-			log.Println("user_id is not a string")
+			log.Println("userID is not a string")
 			return JWTData{}, errInvalidToken
 		}
 		return JWTData{

@@ -1,11 +1,18 @@
 package types
 
+import "dengovie/internal/domain"
+
 type Group struct {
-	ID   int64
+	ID   domain.GroupID
 	Name string
 }
 
 type User struct {
-	ID   int64
+	ID   domain.UserID
 	Name string
+}
+
+type UserDebt struct {
+	AnotherUser User
+	Amount      int64
 }

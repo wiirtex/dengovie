@@ -2,6 +2,7 @@ package dengovie
 
 import (
 	"context"
+	"dengovie/internal/domain"
 	storeTypes "dengovie/internal/store/types"
 	"github.com/gin-gonic/gin"
 	"log"
@@ -21,14 +22,13 @@ import (
 //	@Router        /groups [get]
 func (c *Controller) ListUserGroups(ctx *gin.Context) {
 
-	userID := ctx.GetString("user_id")
-	id, err := strconv.Atoi(userID)
+	userID, err := strconv.Atoi(ctx.GetString(domain.UserIDKey))
 	if err != nil {
 		log.Println("strconv.Atoi:", err)
 		ctx.AbortWithStatus(http.StatusBadRequest)
 	}
 	groups, err := c.storage.ListUserGroups(context.TODO(), storeTypes.ListUserGroupsInput{
-		UserID: int64(id),
+		UserID: domain.UserID(userID),
 	})
 	if err != nil {
 		log.Println("storage.ListUserGroups:", err)
@@ -51,15 +51,14 @@ func (c *Controller) ListUserGroups(ctx *gin.Context) {
 //	@Router        /groups/{groupID}/users [get]
 func (c *Controller) ListUsersInGroup(ctx *gin.Context) {
 
-	_ = ctx.GetInt64("user_id") // защита от несанкционированного чтения
-	groupIDStr := ctx.Param("groupID")
-	groupID, err := strconv.Atoi(groupIDStr)
+	_ = ctx.GetInt64(domain.UserIDKey) // тут будет защита от IDOR
+	groupID, err := strconv.Atoi(ctx.Param("groupID"))
 	if err != nil {
 		log.Println("strconv.Atoi(groupIDStr):", err)
 		ctx.AbortWithStatus(http.StatusBadRequest)
 	}
 	groups, err := c.storage.ListUsersInGroup(context.TODO(), storeTypes.ListUsersInGroupInput{
-		GroupID: int64(groupID),
+		GroupID: domain.GroupID(groupID),
 	})
 	if err != nil {
 		log.Println("storage.ListUsersInGroup:", err)

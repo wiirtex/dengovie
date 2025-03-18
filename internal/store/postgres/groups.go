@@ -2,9 +2,49 @@ package postgres
 
 import (
 	"context"
+	"dengovie/internal/domain"
 	"dengovie/internal/store/types"
 	"fmt"
+	"github.com/lib/pq"
 )
+
+func (r *Repo) IsUserInGroup(ctx context.Context, userID domain.UserID, groupID domain.GroupID) (bool, error) {
+
+	query := `
+select exists (select 1 from user_groups ug where ug.group_id = $1 and ug.user_id = $2)
+`
+
+	row := r.db.QueryRowContext(ctx, query, groupID, userID)
+	if row.Err() != nil {
+		return false, fmt.Errorf("db.QueryRowContext: %w", row.Err())
+	}
+
+	var exists bool
+	if err := row.Scan(&exists); err != nil {
+		return false, fmt.Errorf("row.Scan: %w", err)
+	}
+
+	return exists, nil
+}
+
+func (r *Repo) AreUsersInGroup(ctx context.Context, userIDs []domain.UserID, groupID domain.GroupID) (bool, error) {
+
+	query := `
+select $3 = (select count(distinct ug.id) from user_groups ug where ug.group_id = $1 and ug.user_id = any($2))
+`
+
+	row := r.db.QueryRowContext(ctx, query, groupID, pq.Array(userIDs), len(userIDs))
+	if row.Err() != nil {
+		return false, fmt.Errorf("db.QueryRowContext: %w", row.Err())
+	}
+
+	var exists bool
+	if err := row.Scan(&exists); err != nil {
+		return false, fmt.Errorf("row.Scan: %w", err)
+	}
+
+	return exists, nil
+}
 
 func (r *Repo) ListUserGroups(ctx context.Context, input types.ListUserGroupsInput) ([]types.Group, error) {
 

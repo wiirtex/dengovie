@@ -2,6 +2,7 @@ package dengovie
 
 import (
 	"context"
+	"dengovie/internal/domain"
 	storeTypes "dengovie/internal/store/types"
 	"dengovie/internal/utils/jwt"
 	"dengovie/internal/web"
@@ -63,7 +64,7 @@ func (c *Controller) Login(ctx *gin.Context) {
 		return
 	}
 
-	signetJWT, err := jwt.Sign("user_id", strconv.FormatInt(user.ID, 10))
+	signetJWT, err := jwt.Sign(domain.UserIDKey, strconv.FormatInt(int64(user.ID), 10))
 	if err != nil {
 		log.Println("jwt.Sign:", err)
 		ctx.Status(http.StatusInternalServerError)

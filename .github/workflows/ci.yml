@@ -17,11 +17,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-
-      - name: Navigate to client-app
-        run: cd client-app
-    
-
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
@@ -29,6 +24,8 @@ jobs:
           cache: 'npm'
           cache-dependency-path: client-app/package-lock.json 
     
+      - name: Navigate to client-app
+        run: cd client-app
 
       - name: Install dependencies
         run: npm install

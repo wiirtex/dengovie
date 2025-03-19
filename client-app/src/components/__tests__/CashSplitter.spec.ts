@@ -1,4 +1,6 @@
-import { describe, it, expect, vi } from 'vitest';
+// @ts-nocheck
+
+import { describe, it, expect } from 'vitest';
 import { mount } from '@vue/test-utils';
 import {ElTable, ElTableColumn, ElSwitch, ElInputNumber, ElButton, ElCheckbox} from 'element-plus';
 import CashSplitter from "../CashSplitter.vue";
@@ -151,8 +153,6 @@ describe('CashSplitter.vue', () => {
     wrapper.vm.num = 1000;
 
     // Выбираем одну строку
-    const firstRow = { name: 'Aleyna Kutzner', telegram: '@aleyna' };
-
     await wrapper.vm.$nextTick();
 
     const inputNumber = wrapper.findAll('.el-checkbox__original')[1];

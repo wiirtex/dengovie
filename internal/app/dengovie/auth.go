@@ -6,10 +6,10 @@ import (
 	storeTypes "dengovie/internal/store/types"
 	"dengovie/internal/utils/jwt"
 	"dengovie/internal/web"
-	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
-	"strconv"
+
+	"github.com/gin-gonic/gin"
 )
 
 // RequestCode godoc
@@ -64,14 +64,24 @@ func (c *Controller) Login(ctx *gin.Context) {
 		return
 	}
 
-	signetJWT, err := jwt.Sign(domain.UserIDKey, strconv.FormatInt(int64(user.ID), 10))
+	signetJWT, err := jwt.Sign(domain.UserIDKey, user)
 	if err != nil {
 		log.Println("jwt.Sign:", err)
 		ctx.Status(http.StatusInternalServerError)
 		return
 	}
 
-	ctx.SetCookie("access-token", signetJWT, 0, "", "", false, false)
+	ctx.SetCookie("access-token", signetJWT, 0, "", "", false, true)
+}
+
+// Logout godoc
+//
+//	@Summary      Выйти из профиля
+//	@Description  logout
+//	@Success		200		{string}	string			"ok"
+//	@Router        /auth/logout [post]
+func (c *Controller) Logout(ctx *gin.Context) {
+	ctx.SetCookie("access-token", "", 0, "", "", false, true)
 }
 
 type LoginRequest struct {

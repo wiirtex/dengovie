@@ -6,12 +6,14 @@ import (
 	"dengovie/internal/service/debts"
 	"dengovie/internal/store/postgres"
 	"fmt"
-	"github.com/gin-gonic/gin"
 	"log"
 	"os"
 
+	"github.com/gin-gonic/gin"
+
 	_ "dengovie/docs"
 	_ "dengovie/internal/config"
+
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
@@ -36,8 +38,11 @@ import (
 // @externalDocs.description	OpenAPI
 // @externalDocs.url			https://swagger.io/resources/open-api/
 func main() {
+	gin.SetMode(gin.DebugMode)
 
 	r := gin.Default()
+
+	r.Use(middlewares.CORSMiddleware)
 
 	connString, found := os.LookupEnv("POSTGRES_CONN_STRING")
 	if !found {
@@ -60,6 +65,7 @@ func main() {
 		{
 			auth.POST("/request_code", c.RequestCode)
 			auth.POST("/login", c.Login)
+			auth.POST("/logout", c.Logout)
 		}
 
 		groups := v1.Group("/groups")
@@ -72,7 +78,7 @@ func main() {
 		user := v1.Group("/user")
 		{
 			user.Use(middlewares.CheckAuth)
-			user.GET("", func(context *gin.Context) { /**/ })
+			user.GET("", c.GetMe)
 		}
 
 		debtsHandler := v1.Group("/debts")

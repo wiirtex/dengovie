@@ -9,7 +9,7 @@
     <el-table-column
         label="Будет должен"
     >
-      <template #default="scope">{{ debt }}</template>
+      <template #default="scope">{{ multipleSelection.includes(scope.row) ? debt : 0 }}</template>
     </el-table-column>
   </el-table>
   <div>

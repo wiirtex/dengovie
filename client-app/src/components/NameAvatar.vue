@@ -6,13 +6,16 @@ const props = defineProps<{
 }>();
 
 const displayName = computed(() => {
-  const [left, right] = props.name.split(" ");
+  const [left, right] = props.name.trim().split(" ");
 
-  if (left !== undefined && right !== undefined) {
+  const isEmptyOrUndefined = (s: string) => s === undefined || s === '';
+
+  if (!isEmptyOrUndefined(left) && !isEmptyOrUndefined(right)) {
     return left[0] + right[0];
-  } else if (left !== undefined) {
+  } else if (!isEmptyOrUndefined(left)) {
     return left[0];
   }
+
   return "?";
 })
 

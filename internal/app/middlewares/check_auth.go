@@ -3,9 +3,10 @@ package middlewares
 import (
 	"dengovie/internal/domain"
 	"dengovie/internal/utils/jwt"
-	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 func CheckAuth(ctx *gin.Context) {
@@ -22,7 +23,7 @@ func CheckAuth(ctx *gin.Context) {
 		log.Println("verifyJWT:", err)
 		ctx.AbortWithStatus(http.StatusUnauthorized)
 	}
-	ctx.Set(domain.UserIDKey, jwtData.UserID)
+	ctx.Set(domain.UserIDKey, jwtData)
 
 	ctx.Next()
 }

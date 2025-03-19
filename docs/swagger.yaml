@@ -92,6 +92,26 @@ paths:
           schema:
             $ref: '#/definitions/web.APIError'
       summary: Зайти с telegramAlias и коду. На время тестирования подходит 111
+  /auth/logout:
+    post:
+      consumes:
+      - application/json
+      description: logout
+      parameters:
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/dengovie.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+      summary: Выйти из профиля
   /auth/request_code:
     post:
       consumes:
@@ -209,6 +229,19 @@ paths:
           schema:
             $ref: '#/definitions/web.APIError'
       summary: Список юзеров в группе
+  /user:
+    get:
+      consumes:
+      - application/json
+      description: get-me
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+      summary: Получение информации о профиле пользователя
 securityDefinitions:
   BasicAuth:
     type: basic

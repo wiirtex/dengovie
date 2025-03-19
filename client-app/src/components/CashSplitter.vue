@@ -1,5 +1,5 @@
 <template>
-  <el-table @selection-change="handleSelectionChange" class="w-full h-full" :data="tableData" style="width: 100%">
+  <el-table @selection-change="handleSelectionChange" class="w-full h-full shadow-lg rounded-md" :data="tableData" style="width: 100%">
     <el-table-column type="selection"/>
     <el-table-column property="name" label="Имя"/>
     <el-table-column
@@ -9,7 +9,7 @@
     <el-table-column
         label="Будет должен"
     >
-      <template #default="scope">{{ debt }}</template>
+      <template #default="scope">{{ multipleSelection.includes(scope.row) ? debt : 0 }}</template>
     </el-table-column>
   </el-table>
   <div>

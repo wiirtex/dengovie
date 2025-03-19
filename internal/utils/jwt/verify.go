@@ -4,13 +4,17 @@ import (
 	"dengovie/internal/domain"
 	"errors"
 	"fmt"
-	"github.com/golang-jwt/jwt/v5"
 	"log"
+	"strconv"
 	"time"
+
+	"github.com/golang-jwt/jwt/v5"
 )
 
 type JWTData struct {
-	UserID string `json:"user_id"`
+	UserID    string `json:"user_id"`
+	UserName  string `json:"user_name"`
+	UserAlias string `json:"user_alias"`
 }
 
 var (
@@ -55,13 +59,16 @@ func VerifyJWT(tok string) (JWTData, error) {
 		}
 
 		fmt.Printf("claims: %v\n", claims[domain.UserIDKey])
-		userID, ok := claims[domain.UserIDKey].(string)
+		user, ok := claims[domain.UserIDKey].(map[string]any)
 		if !ok {
-			log.Println("userID is not a string")
+			log.Println("userID is not a map[string]any")
 			return JWTData{}, errInvalidToken
 		}
+
 		return JWTData{
-			UserID: userID,
+			UserID:    strconv.FormatInt(int64(user["ID"].(float64)), 10),
+			UserName:  user["Name"].(string),
+			UserAlias: fmt.Sprintf("@%s", user["Name"].(string)),
 		}, nil
 	}
 

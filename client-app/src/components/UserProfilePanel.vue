@@ -7,6 +7,10 @@ const props = defineProps<{
   tg: string
 }>();
 
+defineEmits<{
+  logout: []
+}>()
+
 </script>
 
 <template>
@@ -20,7 +24,7 @@ const props = defineProps<{
         {{tg}}
       </div>
     </section>
-    <el-button>Выйти</el-button>
+    <el-button @click="$emit('logout')">Выйти</el-button>
   </section>
 </template>
 

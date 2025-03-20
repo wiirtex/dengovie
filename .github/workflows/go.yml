@@ -1,0 +1,55 @@
+# This workflow will build a golang project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-go
+
+name: Go
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+
+  tests:
+    env:
+      PGDATABASE: dengovie
+      PGUSERNAME: postgres
+      PGPASSWORD: password
+      POSTGRES_CONN_STRING: postgresql://postgres:password@localhost:5432/dengovie?sslmode=disable
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.22'
+
+    - name: Install binaries
+      run: make binaries
+
+    - name: Start PostgreSQL
+      run: |
+        initdb --username="postgres"
+
+        echo "Starting PostgreSQL..."
+        pg_ctl start
+
+        echo "Creating user..."
+        psql --username="postgres" --dbname="postgres" --command="CREATE USER $PGUSERNAME PASSWORD '$PGPASSWORD'" --command="\du"
+
+        echo "Creating database..."
+        createdb --owner="$PGUSERNAME" --username="postgres" "$PGDATABASE"
+
+    - name: Run Migrations
+      run: make db-up
+
+    - name: Build
+      run: go build -v ./...
+
+    - name: Test
+      run: go test -coverprofile cover.out  `go list ./internal/... | grep -v ./internal/mocks`
+
+    - name: Check Coverage
+      uses: vladopajic/go-test-coverage@v2

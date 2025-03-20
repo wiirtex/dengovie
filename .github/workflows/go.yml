@@ -30,7 +30,10 @@ jobs:
       run: make binaries
 
     - name: Start PostgreSQL
+      shell: bash
       run: |
+        echo "$(pg_config --bindir)" >> $GITHUB_PATH
+        
         initdb --username="postgres"
 
         echo "Starting PostgreSQL..."

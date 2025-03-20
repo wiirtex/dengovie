@@ -12,7 +12,7 @@ import (
 
 func (s *Service) ShareDebt(ctx context.Context, input types.ShareDebtInput) error {
 
-	// TODO: транзацию!
+	// TODO: транзакцию!
 
 	// проверяем, что деляший в группе
 	isIn, err := s.storage.IsUserInGroup(ctx, input.BuyerID, input.GroupID)

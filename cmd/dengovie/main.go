@@ -5,6 +5,7 @@ import (
 	"dengovie/internal/app/middlewares"
 	"dengovie/internal/service/debts"
 	"dengovie/internal/store/postgres"
+	"dengovie/internal/utils/env"
 	"fmt"
 	"log"
 	"os"
@@ -38,6 +39,7 @@ import (
 // @externalDocs.description	OpenAPI
 // @externalDocs.url			https://swagger.io/resources/open-api/
 func main() {
+	env.InitEnvs(nil)
 	gin.SetMode(gin.DebugMode)
 
 	r := gin.Default()

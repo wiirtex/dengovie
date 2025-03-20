@@ -1,0 +1,12 @@
+resolve-type-alias: false
+disable-version-string: true
+issue-845-fix: true
+outpkg: mocks
+dir: internal/mocks
+packages:
+  dengovie/internal/store/types:
+    interfaces:
+      Storage:
+  dengovie/internal/service/debts/types:
+    interfaces:
+      DebtsService:

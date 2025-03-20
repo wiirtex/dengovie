@@ -1,4 +1,4 @@
-package jwt
+package env
 
 import (
 	"fmt"
@@ -7,7 +7,7 @@ import (
 	"sync/atomic"
 )
 
-var jwtKey []byte
+var initEnvsInited = atomic.Bool{}
 
 func getValueFromEnv(key string) string {
 	value, found := os.LookupEnv(key)
@@ -18,21 +18,14 @@ func getValueFromEnv(key string) string {
 	return value
 }
 
-var initEnvsInited = atomic.Bool{}
-
-type EnvKey string
-
-var allEnvKeys = []string{
-	"JWT_TOKEN",
-}
-
 func InitEnvs(envs map[string]string) {
 	if !initEnvsInited.Load() {
 		for _, key := range allEnvKeys {
-			if value, in := envs[key]; !in {
-				jwtKey = []byte(getValueFromEnv(key))
-			} else {
-				jwtKey = []byte(value)
+			value, in := envs[key]
+
+			envValues[key] = value
+			if !in {
+				envValues[key] = getValueFromEnv(key)
 			}
 		}
 	} else {

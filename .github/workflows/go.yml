@@ -49,7 +49,7 @@ jobs:
       run: go build -v ./...
 
     - name: Test
-      run: go test -coverprofile cover.out  `go list ./internal/... | grep -v ./internal/mocks`
+      run: make test-cov
 
     - name: Check Coverage
       uses: vladopajic/go-test-coverage@v2

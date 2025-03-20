@@ -9,7 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// ListUserGroups godoc
+// GetMe godoc
 //
 //	@Summary      Получение информации о профиле пользователя
 //	@Description  get-me

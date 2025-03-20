@@ -7,7 +7,6 @@ import (
 	storeTypes "dengovie/internal/store/types"
 	"dengovie/internal/web"
 	"errors"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
@@ -29,12 +28,10 @@ func (c *Controller) ListDebts(ctx *gin.Context) {
 	userID := ctx.GetString(domain.UserIDKey)
 	id, err := strconv.Atoi(userID)
 	if err != nil {
-		log.Println("strconv.Atoi(userID):", err)
 		ctx.AbortWithStatus(http.StatusBadRequest)
 		return
 	}
 
-	fmt.Println(userID)
 	debts, err := c.storage.ListUserDebts(context.TODO(), storeTypes.ListUserDebtsInput{
 		UserID: domain.UserID(id),
 	})
@@ -43,7 +40,6 @@ func (c *Controller) ListDebts(ctx *gin.Context) {
 		ctx.AbortWithStatus(http.StatusInternalServerError)
 		return
 	}
-	fmt.Println(debts)
 
 	var resp ListDebtsResponseBody
 	for _, debt := range debts {
@@ -93,7 +89,6 @@ func (c *Controller) ShareDebt(ctx *gin.Context) {
 		return
 	}
 
-	fmt.Println(req)
 	err = c.debtsService.ShareDebt(context.TODO(), debtsTypes.ShareDebtInput{
 		BuyerID:   domain.UserID(userID),
 		GroupID:   req.GroupID,

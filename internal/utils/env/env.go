@@ -4,13 +4,13 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"sync/atomic"
+	"sync"
 )
 
-var initEnvsInited = atomic.Bool{}
+var initOnce sync.Once
 
-func getValueFromEnv(key string) string {
-	value, found := os.LookupEnv(key)
+func getValueFromEnv(key Key) string {
+	value, found := os.LookupEnv(string(key))
 	if !found {
 		log.Fatal(fmt.Sprintf("%v environment variable not found", key))
 	}
@@ -18,17 +18,14 @@ func getValueFromEnv(key string) string {
 	return value
 }
 
-func InitEnvs(envs map[string]string) {
-	if !initEnvsInited.Load() {
+func InitEnvs(envs map[Key]string) {
+	initOnce.Do(func() {
 		for _, key := range allEnvKeys {
-			value, in := envs[key]
-
-			envValues[key] = value
-			if !in {
-				envValues[key] = getValueFromEnv(key)
+			if value, in := envs[key]; !in {
+				envVars[key] = getValueFromEnv(key)
+			} else {
+				envVars[key] = value
 			}
 		}
-	} else {
-		log.Fatal(fmt.Sprintf("error: InitEnvs was called second time: %v", allEnvKeys))
-	}
+	})
 }

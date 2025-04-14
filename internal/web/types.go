@@ -13,3 +13,9 @@ const (
 type APIError struct {
 	ErrorReason ErrorReason
 }
+
+type JWTKey string
+
+const (
+	JWTUserIDKey JWTKey = "user_id"
+)

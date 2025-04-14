@@ -1,3 +1,5 @@
+include .env
+
 build-n-run:
 	swag init -d cmd/dengovie,internal/app/dengovie,internal/web,internal/domain
 	go run cmd/dengovie/main.go
@@ -6,7 +8,7 @@ test-cov:
 	go test -coverprofile cover.out  `go list ./internal/... | grep -v ./internal/mocks`
 
 test-env-up:
-	include .env
+	touch .env
 	docker run -d -e POSTGRES_PASSWORD=pass -e POSTGRES_DB=dengovie -p 5432:5432 --name=dengovie postgres
 
 test-env-down:
@@ -19,7 +21,6 @@ db-create:
 
 
 db-up:
-	include .env
 	goose -dir migrations postgres $(POSTGRES_CONN_STRING) up
 
 binaries:

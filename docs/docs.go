@@ -64,24 +64,7 @@ const docTemplate = `{
         "/auth/logout": {
             "post": {
                 "description": "logout",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
                 "summary": "Выйти из профиля",
-                "parameters": [
-                    {
-                        "description": "body",
-                        "name": "body",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/dengovie.LoginRequest"
-                        }
-                    }
-                ],
                 "responses": {
                     "200": {
                         "description": "ok",
@@ -160,6 +143,37 @@ const docTemplate = `{
                     },
                     "404": {
                         "description": "клиент не найден",
+                        "schema": {
+                            "$ref": "#/definitions/web.APIError"
+                        }
+                    }
+                }
+            }
+        },
+        "/debts/pay": {
+            "post": {
+                "description": "pay-debt-to-user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Выплатить долг пользователю",
+                "parameters": [
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dengovie.ShareDebtRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "400": {
+                        "description": "невалидный запрос",
                         "schema": {
                             "$ref": "#/definitions/web.APIError"
                         }
@@ -285,6 +299,57 @@ const docTemplate = `{
                     "200": {
                         "description": "ok",
                         "schema": {
+                            "$ref": "#/definitions/dengovie.GetMeResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/delete": {
+            "delete": {
+                "description": "update-my-name",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Удаление залогиненного юзера",
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/update_name": {
+            "post": {
+                "description": "update-my-name",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Обновление имени юзера",
+                "parameters": [
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dengovie.UpdateNameInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
                             "type": "string"
                         }
                     }
@@ -293,6 +358,20 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "dengovie.GetMeResponse": {
+            "type": "object",
+            "properties": {
+                "alias": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "integer"
+                }
+            }
+        },
         "dengovie.ListDebtsResponseBody": {
             "type": "object",
             "properties": {
@@ -329,6 +408,14 @@ const docTemplate = `{
                     "items": {
                         "type": "integer"
                     }
+                }
+            }
+        },
+        "dengovie.UpdateNameInput": {
+            "type": "object",
+            "properties": {
+                "new_name": {
+                    "type": "string"
                 }
             }
         },

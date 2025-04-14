@@ -1,6 +1,7 @@
 package jwt
 
 import (
+	"dengovie/internal/web"
 	"fmt"
 	"github.com/golang-jwt/jwt/v5"
 	"time"
@@ -16,17 +17,17 @@ func Sign(data ...any) (string, error) {
 		return "", fmt.Errorf("invalid length of data")
 	}
 
-	var lastKey string
+	var lastKey web.JWTKey
 	for i := range data {
 		if i%2 == 0 {
-			t, ok := data[i].(string)
+			t, ok := data[i].(web.JWTKey)
 			if !ok {
-				return "", fmt.Errorf("invalid type of data element at index %d (expected string)", i)
+				return "", fmt.Errorf("invalid type of data element at index %d (expected web.JWTKey)", i)
 			}
 			lastKey = t
 			continue
 		}
-		claims[lastKey] = data[i]
+		claims[string(lastKey)] = data[i]
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)

@@ -1,5 +1,14 @@
 basePath: /api/v1
 definitions:
+  dengovie.GetMeResponse:
+    properties:
+      alias:
+        type: string
+      name:
+        type: string
+      user_id:
+        type: integer
+    type: object
   dengovie.ListDebtsResponseBody:
     properties:
       debts:
@@ -24,6 +33,11 @@ definitions:
         items:
           type: integer
         type: array
+    type: object
+  dengovie.UpdateNameInput:
+    properties:
+      new_name:
+        type: string
     type: object
   dengovie.UserDebt:
     properties:
@@ -94,18 +108,7 @@ paths:
       summary: Зайти с telegramAlias и коду. На время тестирования подходит 111
   /auth/logout:
     post:
-      consumes:
-      - application/json
       description: logout
-      parameters:
-      - description: body
-        in: body
-        name: body
-        required: true
-        schema:
-          $ref: '#/definitions/dengovie.LoginRequest'
-      produces:
-      - application/json
       responses:
         "200":
           description: ok
@@ -161,6 +164,26 @@ paths:
           schema:
             $ref: '#/definitions/web.APIError'
       summary: Список всех долгов юзера, в которых он состоит
+  /debts/pay:
+    post:
+      consumes:
+      - application/json
+      description: pay-debt-to-user
+      parameters:
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/dengovie.ShareDebtRequest'
+      produces:
+      - application/json
+      responses:
+        "400":
+          description: невалидный запрос
+          schema:
+            $ref: '#/definitions/web.APIError'
+      summary: Выплатить долг пользователю
   /debts/share:
     post:
       consumes:
@@ -240,8 +263,41 @@ paths:
         "200":
           description: ok
           schema:
-            type: string
+            $ref: '#/definitions/dengovie.GetMeResponse'
       summary: Получение информации о профиле пользователя
+  /user/delete:
+    delete:
+      consumes:
+      - application/json
+      description: update-my-name
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+      summary: Удаление залогиненного юзера
+  /user/update_name:
+    post:
+      consumes:
+      - application/json
+      description: update-my-name
+      parameters:
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/dengovie.UpdateNameInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+      summary: Обновление имени юзера
 securityDefinitions:
   BasicAuth:
     type: basic

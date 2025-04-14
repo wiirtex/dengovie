@@ -21,9 +21,6 @@ jobs:
       with:
         go-version: '1.22'
 
-    - name: Build
-      run: go build -v ./...
-
     - name: Test
       run: make test-cov
 
@@ -33,3 +30,16 @@ jobs:
         config: ./.testcoverage.yml
         git-token: ${{ github.ref_name == 'main' && secrets.GITHUB_TOKEN || '' }}
         git-branch: badges
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.22'
+
+      - name: Build
+        run: go build -v ./...

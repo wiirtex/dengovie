@@ -16,4 +16,6 @@ type Storage interface {
 	ListUserDebts(ctx context.Context, input ListUserDebtsInput) ([]UserDebt, error)
 	ShareDebt(ctx context.Context, input ShareDebtInput) error
 	CreateEmptyDebts(ctx context.Context, input CreateEmptyDebtsInput) error
+
+	PayDebt(ctx context.Context, input PayDebtInput) error
 }

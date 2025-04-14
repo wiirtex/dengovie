@@ -122,3 +122,65 @@ type ShareDebtRequest struct {
 	UserIDs []domain.UserID `json:"user_ids"`
 	Amount  int64           `json:"amount"`
 }
+
+// PayDebt godoc
+//
+//	@Summary      	Выплатить долг пользователю
+//	@Description  	pay-debt-to-user
+//	@Accept       	json
+//	@Produce    	json
+//	@Param			body 	body 		ShareDebtRequest	true	 "body"
+//	@Failure		400		{object}	web.APIError		"невалидный запрос"
+//	@Router        	/debts/share [post]
+func (c *Controller) PayDebt(ctx *gin.Context) {
+
+	userID, err := strconv.Atoi(ctx.GetString(domain.UserIDKey))
+	if err != nil {
+		log.Println("strconv.Atoi(userID):", err)
+		ctx.AbortWithStatus(http.StatusBadRequest)
+		return
+	}
+
+	req := PayDebtRequest{}
+	err = ctx.ShouldBindBodyWithJSON(&req)
+	if err != nil {
+		log.Println("error ShouldBindBodyWithJSON:", err)
+		ctx.Status(http.StatusBadRequest)
+		return
+	}
+
+	err = c.debtsService.ShareDebt(context.TODO(), debtsTypes.ShareDebtInput{
+		BuyerID:   domain.UserID(userID),
+		GroupID:   req.GroupID,
+		DebtorIDs: req.UserIDs,
+		Amount:    req.Amount,
+	})
+	if err != nil {
+		if errors.Is(err, debtsTypes.ErrDebtorNotInGroup) {
+			ctx.AbortWithStatusJSON(http.StatusBadRequest, web.APIError{
+				ErrorReason: web.DebtorNotInGroup,
+			})
+			return
+		}
+		if errors.Is(err, debtsTypes.ErrBuyerNotInGroup) {
+			ctx.AbortWithStatusJSON(http.StatusBadRequest, web.APIError{
+				ErrorReason: web.BuyerNotInGroup,
+			})
+			return
+		}
+
+		log.Println("debtsService.ShareDebt:", err)
+		ctx.AbortWithStatus(http.StatusInternalServerError)
+		return
+	}
+
+	ctx.Status(http.StatusOK)
+}
+
+type PayDebtRequest struct {
+	// Долг перед кем выплачивается
+	AnotherUserID domain.UserID `json:"another_user_id"`
+	// Full если true, то сумма не учитывается
+	Full   bool  `json:"full"`
+	Amount int64 `json:"amount"`
+}

@@ -50,7 +50,6 @@ func main() {
 	if !found {
 		log.Fatal("POSTGRES_CONN_STRING environment variable not found")
 	}
-	fmt.Println(connString)
 
 	storage, err := postgres.New(connString)
 	if err != nil {
@@ -81,6 +80,8 @@ func main() {
 		{
 			user.Use(middlewares.CheckAuth)
 			user.GET("", c.GetMe)
+			user.POST("update_name", c.GetMe)
+			user.DELETE("delete", c.GetMe)
 		}
 
 		debtsHandler := v1.Group("/debts")

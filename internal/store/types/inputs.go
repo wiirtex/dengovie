@@ -32,3 +32,9 @@ type CreateEmptyDebtsInput struct {
 	UserID         domain.UserID
 	AnotherUserIDs []domain.UserID
 }
+
+type PayDebtInput struct {
+	UserID         domain.UserID
+	AnotherUserIDs []domain.UserID
+	Amount         int64
+}

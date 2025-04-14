@@ -8,3 +8,10 @@ type ShareDebtInput struct {
 	DebtorIDs []domain.UserID `json:"debtor_ids"`
 	Amount    int64           `json:"amount"`
 }
+
+type PayDebtInput struct {
+	UserID  domain.UserID `json:"payer_user_id"`
+	PayeeID domain.UserID `json:"payee_user_id"`
+	Full    bool          `json:"full"`
+	Amount  int64         `json:"amount"`
+}

@@ -7,9 +7,10 @@ import (
 	storeTypes "dengovie/internal/store/types"
 	"dengovie/internal/web"
 	"errors"
-	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 // ListDebts godoc

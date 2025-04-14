@@ -1,17 +1,17 @@
 package debts
 
 import (
-	"dengovie/internal/mocks"
+	mockStore "dengovie/internal/mocks/store"
 	"testing"
 )
 
 type env struct {
-	mockStorage *mocks.MockStorage
+	mockStorage *mockStore.MockStorage
 }
 
 func newEnv(t *testing.T) *env {
 	return &env{
-		mockStorage: mocks.NewMockStorage(t),
+		mockStorage: mockStore.NewMockStorage(t),
 	}
 }
 

@@ -4,10 +4,11 @@ import (
 	"context"
 	"dengovie/internal/domain"
 	storeTypes "dengovie/internal/store/types"
-	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
 	"strconv"
+
+	"github.com/gin-gonic/gin"
 )
 
 // ListUserGroups godoc

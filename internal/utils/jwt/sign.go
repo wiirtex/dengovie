@@ -3,11 +3,14 @@ package jwt
 import (
 	"dengovie/internal/web"
 	"fmt"
-	"github.com/golang-jwt/jwt/v5"
 	"time"
+
+	"github.com/golang-jwt/jwt/v5"
 )
 
 func Sign(data ...any) (string, error) {
+	initOnce()
+
 	claims := jwt.MapClaims{
 		"nbf": time.Now().Unix(),
 		"exp": time.Now().Add(7 * 24 * time.Hour).Unix(),

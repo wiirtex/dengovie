@@ -3,15 +3,20 @@ package jwt
 import (
 	"dengovie/internal/utils/env"
 	"fmt"
+	"sync"
 )
 
 var jwtKey []byte
 
-func init() {
-	value, err := env.GetEnv(env.KeyJwtToken)
-	if err != nil {
-		panic(fmt.Errorf("JWT token env error: %w", err))
-	}
+var initFunc sync.Once
 
-	jwtKey = []byte(value)
+func initOnce() {
+	initFunc.Do(func() {
+		value, err := env.GetEnv(env.KeyJwtToken)
+		if err != nil {
+			panic(fmt.Errorf("JWT token env error: %w", err))
+		}
+
+		jwtKey = []byte(value)
+	})
 }

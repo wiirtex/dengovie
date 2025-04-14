@@ -3,8 +3,9 @@ package dengovie
 import (
 	"dengovie/internal/domain"
 	"errors"
-	"github.com/gin-gonic/gin"
 	"log"
+
+	"github.com/gin-gonic/gin"
 )
 
 func getUserID(ctx *gin.Context) (domain.UserID, error) {
@@ -14,6 +15,10 @@ func getUserID(ctx *gin.Context) (domain.UserID, error) {
 		return 0, errors.New("userID is not set")
 	}
 
-	userID := userIDRaw.(domain.UserID)
+	userID, ok := userIDRaw.(domain.UserID)
+	if !ok {
+		return 0, errors.New("userID is not a domain.UserID")
+	}
+
 	return userID, nil
 }

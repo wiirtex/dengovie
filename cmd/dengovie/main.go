@@ -1,8 +1,10 @@
 package main
 
 import (
+	_ "dengovie/docs"
 	"dengovie/internal/app/dengovie"
 	"dengovie/internal/app/middlewares"
+	_ "dengovie/internal/config"
 	"dengovie/internal/service/debts"
 	"dengovie/internal/service/users"
 	"dengovie/internal/store/postgres"
@@ -12,10 +14,6 @@ import (
 	"os"
 
 	"github.com/gin-gonic/gin"
-
-	_ "dengovie/docs"
-	_ "dengovie/internal/config"
-
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 )

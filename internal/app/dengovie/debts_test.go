@@ -7,13 +7,14 @@ import (
 	storeTypes "dengovie/internal/store/types"
 	"dengovie/internal/web"
 	"encoding/json"
-	"github.com/gin-gonic/gin"
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/mock"
 	"io"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/gin-gonic/gin"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 )
 
 func Must[T any](v T, err error) T {
@@ -39,7 +40,7 @@ func TestController_ShareDebt(t *testing.T) {
 				assert.Empty(t, w.Body)
 			},
 			prepareMocks: func(t *testing.T, e *env, ctx *gin.Context) {
-				ctx.Set(domain.UserIDKey, "1")
+				ctx.Set(domain.UserIDKey, domain.UserID(1))
 
 				jsonRequestValue := Must(json.Marshal(map[string]any{
 					"group_id": 2,
@@ -66,7 +67,7 @@ func TestController_ShareDebt(t *testing.T) {
 				assert.Empty(t, w.Body)
 			},
 			prepareMocks: func(t *testing.T, e *env, ctx *gin.Context) {
-				ctx.Set(domain.UserIDKey, "1")
+				ctx.Set(domain.UserIDKey, domain.UserID(1))
 
 				jsonRequestValue := Must(json.Marshal(map[string]any{
 					"group_id": 2,
@@ -96,7 +97,7 @@ func TestController_ShareDebt(t *testing.T) {
 				}))), w.Body.String())
 			},
 			prepareMocks: func(t *testing.T, e *env, ctx *gin.Context) {
-				ctx.Set(domain.UserIDKey, "1")
+				ctx.Set(domain.UserIDKey, domain.UserID(1))
 
 				jsonRequestValue := Must(json.Marshal(map[string]any{
 					"group_id": 2,
@@ -126,7 +127,7 @@ func TestController_ShareDebt(t *testing.T) {
 				}))), w.Body.String())
 			},
 			prepareMocks: func(t *testing.T, e *env, ctx *gin.Context) {
-				ctx.Set(domain.UserIDKey, "1")
+				ctx.Set(domain.UserIDKey, domain.UserID(1))
 
 				jsonRequestValue := Must(json.Marshal(map[string]any{
 					"group_id": 2,
@@ -153,7 +154,7 @@ func TestController_ShareDebt(t *testing.T) {
 				assert.Empty(t, w.Body)
 			},
 			prepareMocks: func(t *testing.T, e *env, ctx *gin.Context) {
-				ctx.Set(domain.UserIDKey, "1")
+				ctx.Set(domain.UserIDKey, domain.UserID(1))
 
 				jsonRequestValue := Must(json.Marshal(map[string]any{
 					"group_id": "2",
@@ -228,7 +229,7 @@ func TestController_ListDebts(t *testing.T) {
 				}))), w.Body.String())
 			},
 			prepareMocks: func(t *testing.T, e *env, ctx *gin.Context) {
-				ctx.Set(domain.UserIDKey, "1")
+				ctx.Set(domain.UserIDKey, domain.UserID(1))
 
 				e.storage.EXPECT().ListUserDebts(mock.AnythingOfType("todoCtx"), storeTypes.ListUserDebtsInput{
 					UserID: 1,
@@ -259,7 +260,7 @@ func TestController_ListDebts(t *testing.T) {
 				assert.Empty(t, w.Body)
 			},
 			prepareMocks: func(t *testing.T, e *env, ctx *gin.Context) {
-				ctx.Set(domain.UserIDKey, "1")
+				ctx.Set(domain.UserIDKey, domain.UserID(1))
 
 				e.storage.EXPECT().ListUserDebts(mock.AnythingOfType("todoCtx"), storeTypes.ListUserDebtsInput{
 					UserID: 1,

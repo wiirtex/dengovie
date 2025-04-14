@@ -17,6 +17,7 @@ var (
 )
 
 func VerifyJWT(tok string) (map[web.JWTKey]any, error) {
+	initOnce()
 
 	token, err := jwt.Parse(tok, func(token *jwt.Token) (interface{}, error) {
 		// Don't forget to validate the alg is what you expect:

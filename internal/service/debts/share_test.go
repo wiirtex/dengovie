@@ -6,11 +6,12 @@ import (
 	"dengovie/internal/service/debts/types"
 	storeTypes "dengovie/internal/store/types"
 	"errors"
+	"testing"
+
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
-	"testing"
 )
 
 func TestService_ShareDebt(t *testing.T) {

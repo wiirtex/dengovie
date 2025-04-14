@@ -4,9 +4,10 @@ import (
 	"dengovie/internal/domain"
 	usersTypes "dengovie/internal/service/users/types"
 	storeTypes "dengovie/internal/store/types"
-	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 // GetMe godoc

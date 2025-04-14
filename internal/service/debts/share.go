@@ -3,11 +3,10 @@ package debts
 import (
 	"context"
 	"dengovie/internal/domain"
+	"dengovie/internal/service/debts/types"
 	storeTypes "dengovie/internal/store/types"
 	"fmt"
 	"math/rand/v2"
-
-	"dengovie/internal/service/debts/types"
 )
 
 func (s *Service) ShareDebt(ctx context.Context, input types.ShareDebtInput) error {

@@ -22,7 +22,7 @@ jobs:
         go-version: '1.22'
 
     - name: Test
-      run: make test-cov
+      run: go test -coverprofile cover.out  `go list ./internal/... | grep -v ./internal/mocks`
 
     - name: Check Coverage
       uses: vladopajic/go-test-coverage@v2

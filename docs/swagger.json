@@ -161,7 +161,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dengovie.ShareDebtRequest"
+                            "$ref": "#/definitions/dengovie.PayDebtRequest"
                         }
                     }
                 ],
@@ -385,6 +385,22 @@
                 },
                 "otp": {
                     "type": "string"
+                }
+            }
+        },
+        "dengovie.PayDebtRequest": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "integer"
+                },
+                "another_user_id": {
+                    "description": "Долг перед кем выплачивается",
+                    "type": "integer"
+                },
+                "full": {
+                    "description": "Full если true, то сумма не учитывается",
+                    "type": "boolean"
                 }
             }
         },

@@ -19,6 +19,12 @@ db-create:
 	@[ "$(NAME)" ] || ( echo '💥 Please use:  make NAME="create_pages" db-create'; exit 1 )
 	 goose -dir migrations create "$(NAME)" sql
 
+db-create-test-migration:
+	@[ "$(NAME)" ] || ( echo '💥 Please use:  make NAME="create_pages" db-create'; exit 1 )
+	 goose -dir test/test_migrations create "$(NAME)" sql
+
+db-up-test-data:
+	goose -dir test/test_migrations postgres $(POSTGRES_CONN_STRING) up
 
 db-up:
 	goose -dir migrations postgres $(POSTGRES_CONN_STRING) up

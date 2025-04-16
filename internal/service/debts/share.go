@@ -5,6 +5,7 @@ import (
 	"dengovie/internal/domain"
 	"dengovie/internal/service/debts/types"
 	storeTypes "dengovie/internal/store/types"
+	"dengovie/internal/utils/lo"
 	"fmt"
 	"math/rand/v2"
 )
@@ -23,7 +24,8 @@ func (s *Service) ShareDebt(ctx context.Context, input types.ShareDebtInput) err
 	}
 
 	// проверяем, что все должники в группе
-	areIn, err := s.storage.AreUsersInGroup(ctx, input.DebtorIDs, input.GroupID)
+	debtorIDs := lo.Uniq(input.DebtorIDs)
+	areIn, err := s.storage.AreUsersInGroup(ctx, debtorIDs, input.GroupID)
 	if err != nil {
 		return fmt.Errorf("storage.AreUsersInGroup: %w", err)
 	}
@@ -31,13 +33,17 @@ func (s *Service) ShareDebt(ctx context.Context, input types.ShareDebtInput) err
 		return types.ErrDebtorNotInGroup
 	}
 
-	accounts := make([]domain.UserID, 0, len(input.DebtorIDs))
-	for _, id := range input.DebtorIDs {
+	accounts := make([]domain.UserID, 0, len(debtorIDs))
+	for _, id := range debtorIDs {
 		if id == input.BuyerID {
 			continue
 		}
 
 		accounts = append(accounts, id)
+	}
+
+	if len(accounts) == 0 {
+		return nil
 	}
 
 	// Создаём пустые записи о долгах между людьми в группе
@@ -51,14 +57,14 @@ func (s *Service) ShareDebt(ctx context.Context, input types.ShareDebtInput) err
 
 	// Сумма делится строго без остатка. Первые remainder дебторов получат +1 копейку в случае, если деление не целое.
 	// Так что шаффлим их, чтобы каждый раз разные дебторы получали копейку
-	rand.Shuffle(len(input.DebtorIDs), func(i, j int) {
-		input.DebtorIDs[i], input.DebtorIDs[j] = input.DebtorIDs[j], input.DebtorIDs[i]
+	rand.Shuffle(len(debtorIDs), func(i, j int) {
+		debtorIDs[i], debtorIDs[j] = debtorIDs[j], debtorIDs[i]
 	})
 
-	sum := input.Amount / int64(len(input.DebtorIDs))
-	remainder := input.Amount % int64(len(input.DebtorIDs))
-	amounts := make([]storeTypes.ChangeUserDebtAmountInput, 0, len(input.DebtorIDs))
-	for _, id := range input.DebtorIDs {
+	sum := input.Amount / int64(len(debtorIDs))
+	remainder := input.Amount % int64(len(debtorIDs))
+	amounts := make([]storeTypes.ChangeUserDebtAmountInput, 0, len(debtorIDs))
+	for _, id := range debtorIDs {
 		diff := int64(0)
 		if remainder > 0 {
 			diff = 1

@@ -33,7 +33,7 @@ func (s *Service) PayDebt(ctx context.Context, input debtsTypes.PayDebtInput) er
 	if input.Full {
 		payAmount = debt.Amount
 	} else if payAmount > debt.Amount {
-		return fmt.Errorf("debt amount is greated than payAmount")
+		return fmt.Errorf("debt amount is greater than payAmount")
 	}
 
 	if payAmount < 0 {

@@ -1,21 +1,24 @@
 package env
 
 import (
-	"errors"
 	"fmt"
 )
 
-var allEnvKeys = []string{
-	"JWT_TOKEN",
+type Key string
+
+const (
+	KeyJwtToken Key = "JWT_TOKEN"
+)
+
+var allEnvKeys = []Key{
+	KeyJwtToken,
 }
 
-var envValues = make(map[string]string)
+var envVars = map[Key]string{}
 
-func GetEnv(key string) (string, error) {
-	if !initEnvsInited.Load() {
-		return "", errors.New("environment variables not initialised")
-	}
-	if val, ok := envValues[key]; ok {
+func GetEnv(key Key) (string, error) {
+	InitEnvs(nil)
+	if val, ok := envVars[key]; ok {
 		return val, nil
 	}
 

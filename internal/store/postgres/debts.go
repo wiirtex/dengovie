@@ -12,7 +12,7 @@ func (r *Repo) ListUserDebts(ctx context.Context, input types.ListUserDebtsInput
 	query := `
 select d.another_user_id, u.name, sum(d.direction * d.amount)
 from users u
-inner join debts d on u.id = d.user_id
+inner join debts d on u.id = d.another_user_id
 where d.user_id = $1
 group by d.another_user_id, u.id
 `

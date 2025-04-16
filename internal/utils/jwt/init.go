@@ -1,41 +1,22 @@
 package jwt
 
 import (
+	"dengovie/internal/utils/env"
 	"fmt"
-	"log"
-	"os"
-	"sync/atomic"
+	"sync"
 )
 
 var jwtKey []byte
 
-func getValueFromEnv(key string) string {
-	value, found := os.LookupEnv(key)
-	if !found {
-		log.Fatal(fmt.Sprintf("%v environment variable not found", key))
-	}
+var initFunc sync.Once
 
-	return value
-}
-
-var initEnvsInited = atomic.Bool{}
-
-type EnvKey string
-
-var allEnvKeys = []string{
-	"JWT_TOKEN",
-}
-
-func InitEnvs(envs map[string]string) {
-	if !initEnvsInited.Load() {
-		for _, key := range allEnvKeys {
-			if value, in := envs[key]; !in {
-				jwtKey = []byte(getValueFromEnv(key))
-			} else {
-				jwtKey = []byte(value)
-			}
+func initOnce() {
+	initFunc.Do(func() {
+		value, err := env.GetEnv(env.KeyJwtToken)
+		if err != nil {
+			panic(fmt.Errorf("JWT token env error: %w", err))
 		}
-	} else {
-		log.Fatal(fmt.Sprintf("error: InitEnvs was called second time: %v", allEnvKeys))
-	}
+
+		jwtKey = []byte(value)
+	})
 }

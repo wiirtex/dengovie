@@ -2,7 +2,6 @@ package dengovie
 
 import (
 	"context"
-	"dengovie/internal/domain"
 	storeTypes "dengovie/internal/store/types"
 	"dengovie/internal/utils/jwt"
 	"dengovie/internal/web"
@@ -55,16 +54,16 @@ func (c *Controller) Login(ctx *gin.Context) {
 		return
 	}
 
-	user, err := c.storage.GetUserIDByAlias(context.TODO(), storeTypes.GetUserIDByAliasInput{
+	user, err := c.storage.GetUserByAlias(context.TODO(), storeTypes.GetUserByAliasInput{
 		Alias: req.Alias,
 	})
 	if err != nil {
-		log.Println("storage.GetUserIDByAlias:", err)
+		log.Println("storage.GetUserByAlias:", err)
 		ctx.Status(http.StatusInternalServerError)
 		return
 	}
 
-	signetJWT, err := jwt.Sign(domain.UserIDKey, user)
+	signetJWT, err := jwt.Sign(web.JWTUserIDKey, user.ID)
 	if err != nil {
 		log.Println("jwt.Sign:", err)
 		ctx.Status(http.StatusInternalServerError)

@@ -4,10 +4,11 @@ import (
 	"context"
 	"dengovie/internal/domain"
 	storeTypes "dengovie/internal/store/types"
-	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
 	"strconv"
+
+	"github.com/gin-gonic/gin"
 )
 
 // ListUserGroups godoc
@@ -21,12 +22,12 @@ import (
 //	@Failure		404		{object}	web.APIError	"клиент не найден"
 //	@Router        /groups [get]
 func (c *Controller) ListUserGroups(ctx *gin.Context) {
-
-	userID, err := strconv.Atoi(ctx.GetString(domain.UserIDKey))
+	userID, err := getUserID(ctx)
 	if err != nil {
-		log.Println("strconv.Atoi:", err)
 		ctx.AbortWithStatus(http.StatusBadRequest)
+		return
 	}
+
 	groups, err := c.storage.ListUserGroups(context.TODO(), storeTypes.ListUserGroupsInput{
 		UserID: domain.UserID(userID),
 	})
@@ -51,7 +52,12 @@ func (c *Controller) ListUserGroups(ctx *gin.Context) {
 //	@Router        /groups/{groupID}/users [get]
 func (c *Controller) ListUsersInGroup(ctx *gin.Context) {
 
-	_ = ctx.GetInt64(domain.UserIDKey) // тут будет защита от IDOR
+	_, err := getUserID(ctx) // тут будет защита от IDOR
+	if err != nil {
+		ctx.AbortWithStatus(http.StatusBadRequest)
+		return
+	}
+
 	groupID, err := strconv.Atoi(ctx.Param("groupID"))
 	if err != nil {
 		log.Println("strconv.Atoi(groupIDStr):", err)

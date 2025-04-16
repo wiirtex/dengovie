@@ -1,9 +1,12 @@
 package main
 
 import (
+	_ "dengovie/docs"
 	"dengovie/internal/app/dengovie"
 	"dengovie/internal/app/middlewares"
+	_ "dengovie/internal/config"
 	"dengovie/internal/service/debts"
+	"dengovie/internal/service/users"
 	"dengovie/internal/store/postgres"
 	"dengovie/internal/utils/env"
 	"fmt"
@@ -11,10 +14,6 @@ import (
 	"os"
 
 	"github.com/gin-gonic/gin"
-
-	_ "dengovie/docs"
-	_ "dengovie/internal/config"
-
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
@@ -50,7 +49,6 @@ func main() {
 	if !found {
 		log.Fatal("POSTGRES_CONN_STRING environment variable not found")
 	}
-	fmt.Println(connString)
 
 	storage, err := postgres.New(connString)
 	if err != nil {
@@ -58,8 +56,9 @@ func main() {
 	}
 
 	debtsService := debts.New(storage)
+	usersService := users.New(storage)
 
-	c := dengovie.NewController(storage, debtsService)
+	c := dengovie.NewController(storage, debtsService, usersService)
 
 	v1 := r.Group("/api/v1")
 	{
@@ -81,6 +80,8 @@ func main() {
 		{
 			user.Use(middlewares.CheckAuth)
 			user.GET("", c.GetMe)
+			user.POST("update_name", c.UpdateName)
+			user.DELETE("delete", c.DeleteUser)
 		}
 
 		debtsHandler := v1.Group("/debts")
@@ -88,7 +89,7 @@ func main() {
 			debtsHandler.Use(middlewares.CheckAuth)
 			debtsHandler.GET("", c.ListDebts)
 			debtsHandler.POST("share", c.ShareDebt)
-			debtsHandler.POST("pay", func(context *gin.Context) {})
+			debtsHandler.POST("pay", c.PayDebt)
 		}
 	}
 

@@ -2,27 +2,22 @@ package jwt
 
 import (
 	"dengovie/internal/domain"
+	"dengovie/internal/web"
 	"errors"
 	"fmt"
 	"log"
-	"strconv"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
 )
-
-type JWTData struct {
-	UserID    string `json:"user_id"`
-	UserName  string `json:"user_name"`
-	UserAlias string `json:"user_alias"`
-}
 
 var (
 	errInvalidToken = errors.New("invalid token")
 	errExpiredToken = errors.New("expired token")
 )
 
-func VerifyJWT(tok string) (JWTData, error) {
+func VerifyJWT(tok string) (map[web.JWTKey]any, error) {
+	initOnce()
 
 	token, err := jwt.Parse(tok, func(token *jwt.Token) (interface{}, error) {
 		// Don't forget to validate the alg is what you expect:
@@ -36,7 +31,7 @@ func VerifyJWT(tok string) (JWTData, error) {
 	})
 	if err != nil {
 		log.Println("jwt.Parse:", err)
-		return JWTData{}, errInvalidToken
+		return nil, errInvalidToken
 	}
 
 	if claims, ok := token.Claims.(jwt.MapClaims); ok {
@@ -44,33 +39,30 @@ func VerifyJWT(tok string) (JWTData, error) {
 		exp, err := claims.GetExpirationTime()
 		if err != nil {
 			log.Println("claims.GetExpirationTime error:", err)
-			return JWTData{}, errInvalidToken
+			return nil, errInvalidToken
 		}
 
 		notBefore, err := claims.GetNotBefore()
 		if err != nil {
 			log.Println("claims.GetNotBefore error:", err)
-			return JWTData{}, errInvalidToken
+			return nil, errInvalidToken
 		}
 
 		if notBefore.After(time.Now()) || exp.Before(time.Now()) {
 			log.Println("expired token:", err)
-			return JWTData{}, errExpiredToken
+			return nil, errExpiredToken
 		}
 
-		fmt.Printf("claims: %v\n", claims[domain.UserIDKey])
-		user, ok := claims[domain.UserIDKey].(map[string]any)
+		userID, ok := claims[domain.UserIDKey].(float64)
 		if !ok {
-			log.Println("userID is not a map[string]any")
-			return JWTData{}, errInvalidToken
+			log.Println("userID is not float64")
+			return nil, errInvalidToken
 		}
 
-		return JWTData{
-			UserID:    strconv.FormatInt(int64(user["ID"].(float64)), 10),
-			UserName:  user["Name"].(string),
-			UserAlias: fmt.Sprintf("@%s", user["Name"].(string)),
+		return map[web.JWTKey]any{
+			web.JWTUserIDKey: domain.UserID(userID),
 		}, nil
 	}
 
-	return JWTData{}, fmt.Errorf("token.Claims are not jwt.MapClaims")
+	return nil, fmt.Errorf("token.Claims are not jwt.MapClaims")
 }

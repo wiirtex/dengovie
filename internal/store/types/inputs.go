@@ -10,8 +10,21 @@ type ListUsersInGroupInput struct {
 	GroupID domain.GroupID
 }
 
-type GetUserIDByAliasInput struct {
+type GetUserByAliasInput struct {
 	Alias string
+}
+
+type GetUserByIDInput struct {
+	UserID domain.UserID
+}
+
+type UpdateUserNameInput struct {
+	UserID  domain.UserID
+	NewName string
+}
+
+type DeleteUserInput struct {
+	UserID domain.UserID
 }
 
 type ListUserDebtsInput struct {
@@ -31,4 +44,10 @@ type ChangeUserDebtAmountInput struct {
 type CreateEmptyDebtsInput struct {
 	UserID         domain.UserID
 	AnotherUserIDs []domain.UserID
+}
+
+type PayDebtInput struct {
+	UserID         domain.UserID
+	AnotherUserIDs []domain.UserID
+	Amount         int64
 }

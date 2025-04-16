@@ -9,7 +9,7 @@ on:
       - main
 
 jobs:
-  build-and-test:
+  test:
     runs-on: ubuntu-latest
 
     steps:
@@ -34,6 +34,27 @@ jobs:
         working-directory: client-app
         run: npm test
 
+
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'npm'
+          cache-dependency-path: client-app/package-lock.json 
+    
+    
+      - name: Install dependencies
+        working-directory: client-app
+        run: npm install
+    
     
       - name: Build project
         working-directory: client-app

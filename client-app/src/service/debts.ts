@@ -46,7 +46,7 @@ export async function share(amount: number, user_ids: number[]): Promise<Result<
 
 export async function pay(amount: number, user_id: number): Promise<Result<undefined, 'unknown'>> {
   try {
-    await api.post("/debts/pay", { group_id: 0, amount, user_ids: [user_id] });
+    await api.post("/debts/pay", { full: true, amount, another_user_id: user_id });
 
     return { type: "success", data: undefined };
   } catch (error) {

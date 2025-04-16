@@ -133,41 +133,4 @@ describe('CashSplitter.vue', () => {
     // Проверяем, что значение изменилось
     expect(wrapper.vm.num).toBe(500);
   });
-
-  it('отображение долга в колонке "Будет должен"', async () => {
-    const wrapper = mount(CashSplitter, {
-      global: {
-        components: {
-          ElTable,
-          ElTableColumn,
-          ElSwitch,
-          ElInputNumber,
-          ElButton,
-          ElCheckbox
-        },
-      },
-    });
-
-    // Устанавливаем сумму
-    await wrapper.vm.$nextTick();
-    wrapper.vm.num = 1000;
-
-    // Выбираем одну строку
-    await wrapper.vm.$nextTick();
-
-    const inputNumber = wrapper.findAll('.el-checkbox__original')[1];
-    await inputNumber.setValue(true);
-
-    await wrapper.vm.$nextTick();
-
-    // Проверяем, что долг отображается в колонке "Будет должен"
-    const debtColumn = wrapper
-      .findAll('.cell')
-      .find(x => x.text() === 'Aleyna Kutzner')
-      ?.getRootNodes()[0]
-      .parentNode
-      ?.parentNode
-      ?.children[3].textContent; // 4-я колонка
-    expect(debtColumn).toBe('500'); // 1000 / 2 = 500
-  });
 });

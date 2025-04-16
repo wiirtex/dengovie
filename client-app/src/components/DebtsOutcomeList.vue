@@ -9,7 +9,6 @@
 
           <el-popconfirm
               width="220"
-              :icon="InfoFilled"
               icon-color="#626AEF"
               title="Сколько?"
               @confirm="onPay(u.another_user_id)"

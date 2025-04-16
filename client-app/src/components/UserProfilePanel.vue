@@ -42,7 +42,7 @@ const emit = defineEmits<{
 }>()
 
 async function onNameChange() {
-  await updName(changedName.value);
+  await updName(changedName.value!);
   emit('logout');
 }
 

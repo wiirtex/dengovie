@@ -18,7 +18,7 @@ import type {Me} from "../service/user.ts";
 import {computed, onBeforeMount, ref} from "vue";
 import {all, type DebtItem} from "../service/debts.ts";
 
-const props = defineProps<{
+defineProps<{
   user: Me
 }>()
 

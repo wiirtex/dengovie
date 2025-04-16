@@ -125,7 +125,7 @@ type ShareDebtRequest struct {
 //	@Description  	pay-debt-to-user
 //	@Accept       	json
 //	@Produce    	json
-//	@Param			body 	body 		ShareDebtRequest	true	 "body"
+//	@Param			body 	body 		PayDebtRequest	true	 "body"
 //	@Failure		400		{object}	web.APIError		"невалидный запрос"
 //	@Router        	/debts/pay [post]
 func (c *Controller) PayDebt(ctx *gin.Context) {

@@ -41,15 +41,31 @@ func TestService_ShareDebt(t *testing.T) {
 					Return(true, nil)
 
 				e.mockStorage.EXPECT().
-					AreUsersInGroup(mock.Anything, []domain.UserID{3, 4, 5}, domain.GroupID(2)).
-					Return(true, nil)
+					AreUsersInGroup(mock.Anything, mock.Anything, domain.GroupID(2)).
+					RunAndReturn(func(_ context.Context, userIds []domain.UserID, _ domain.GroupID) (bool, error) {
+						diff := cmp.Diff([]domain.UserID{3, 4, 5}, userIds,
+							cmpopts.SortSlices(func(a, b domain.UserID) bool {
+								return a < b
+							}))
+						assert.Empty(t, diff, "все передаваемые ID должны быть равны")
+
+						return true, nil
+					})
 
 				e.mockStorage.EXPECT().
-					CreateEmptyDebts(mock.Anything, storeTypes.CreateEmptyDebtsInput{
-						UserID:         1,
-						AnotherUserIDs: []domain.UserID{3, 4, 5},
-					}).
-					Return(nil)
+					CreateEmptyDebts(mock.Anything, mock.Anything).
+					RunAndReturn(func(_ context.Context, input storeTypes.CreateEmptyDebtsInput) error {
+						diff := cmp.Diff(storeTypes.CreateEmptyDebtsInput{
+							UserID:         1,
+							AnotherUserIDs: []domain.UserID{3, 4, 5},
+						}, input,
+							cmpopts.SortSlices(func(a, b domain.UserID) bool {
+								return a < b
+							}),
+						)
+						assert.Empty(t, diff, "все передаваемые ID должны быть равны")
+						return nil
+					})
 
 				e.mockStorage.EXPECT().
 					ShareDebt(mock.Anything, mock.Anything).
@@ -107,14 +123,19 @@ func TestService_ShareDebt(t *testing.T) {
 					Return(true, nil)
 
 				e.mockStorage.EXPECT().
-					AreUsersInGroup(mock.Anything, []domain.UserID{3, 4, 5}, domain.GroupID(2)).
-					Return(true, nil)
+					AreUsersInGroup(mock.Anything, mock.Anything, domain.GroupID(2)).
+					RunAndReturn(func(_ context.Context, userIds []domain.UserID, _ domain.GroupID) (bool, error) {
+						diff := cmp.Diff([]domain.UserID{3, 4, 5}, userIds,
+							cmpopts.SortSlices(func(a, b domain.UserID) bool {
+								return a < b
+							}))
+						assert.Empty(t, diff, "все передаваемые ID должны быть равны")
+
+						return true, nil
+					})
 
 				e.mockStorage.EXPECT().
-					CreateEmptyDebts(mock.Anything, storeTypes.CreateEmptyDebtsInput{
-						UserID:         1,
-						AnotherUserIDs: []domain.UserID{3, 4, 5},
-					}).
+					CreateEmptyDebts(mock.Anything, mock.Anything).
 					Return(assert.AnError)
 			},
 		},
@@ -138,8 +159,16 @@ func TestService_ShareDebt(t *testing.T) {
 					Return(true, nil)
 
 				e.mockStorage.EXPECT().
-					AreUsersInGroup(mock.Anything, []domain.UserID{3, 4, 5}, domain.GroupID(2)).
-					Return(true, assert.AnError)
+					AreUsersInGroup(mock.Anything, mock.Anything, domain.GroupID(2)).
+					RunAndReturn(func(_ context.Context, userIds []domain.UserID, _ domain.GroupID) (bool, error) {
+						diff := cmp.Diff([]domain.UserID{3, 4, 5}, userIds,
+							cmpopts.SortSlices(func(a, b domain.UserID) bool {
+								return a < b
+							}))
+						assert.Empty(t, diff, "все передаваемые ID должны быть равны")
+
+						return true, assert.AnError
+					})
 			},
 		},
 		{
@@ -162,8 +191,16 @@ func TestService_ShareDebt(t *testing.T) {
 					Return(true, nil)
 
 				e.mockStorage.EXPECT().
-					AreUsersInGroup(mock.Anything, []domain.UserID{3, 4, 5}, domain.GroupID(2)).
-					Return(false, nil)
+					AreUsersInGroup(mock.Anything, mock.Anything, domain.GroupID(2)).
+					RunAndReturn(func(_ context.Context, userIds []domain.UserID, _ domain.GroupID) (bool, error) {
+						diff := cmp.Diff([]domain.UserID{3, 4, 5}, userIds,
+							cmpopts.SortSlices(func(a, b domain.UserID) bool {
+								return a < b
+							}))
+						assert.Empty(t, diff, "все передаваемые ID должны быть равны")
+
+						return false, nil
+					})
 			},
 		},
 		{

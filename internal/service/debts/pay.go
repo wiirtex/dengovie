@@ -31,8 +31,8 @@ func (s *Service) PayDebt(ctx context.Context, input debtsTypes.PayDebtInput) er
 
 	payAmount := input.Amount
 	if input.Full {
-		payAmount = debt.Amount
-	} else if payAmount > debt.Amount {
+		payAmount = -debt.Amount
+	} else if payAmount > (-debt.Amount) {
 		return fmt.Errorf("debt amount is greater than payAmount")
 	}
 
@@ -42,10 +42,10 @@ func (s *Service) PayDebt(ctx context.Context, input debtsTypes.PayDebtInput) er
 
 	// Обновляем записи о долгах
 	err = s.storage.ShareDebt(ctx, storeTypes.ShareDebtInput{
-		UserID: input.UserID,
+		UserID: input.PayeeID,
 		ChangeDebtAmount: []storeTypes.ChangeUserDebtAmountInput{
 			{
-				UserID: input.PayeeID,
+				UserID: input.UserID,
 				Amount: -payAmount,
 			},
 		},

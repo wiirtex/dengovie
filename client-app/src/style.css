@@ -18,8 +18,8 @@ body {
   display: flex;
   min-width: 320px;
   min-height: 100vh;
-  @apply bg-sky-50
-
+  /*@apply bg-sky-50*/
+  @apply bg-green-50
 }
 
 #app {

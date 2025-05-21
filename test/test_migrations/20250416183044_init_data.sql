@@ -12,8 +12,8 @@ values ('Тимур', 'wiirtex'),
        ('Александр', 'alexander')
 ;
 
-insert into groups (name)
-values ('4119 group');
+insert into groups (id, name)
+values (0, '4119 group');
 
 insert into user_groups (user_id, group_id)
 select id, (select id from groups where name = '4119 group')

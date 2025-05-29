@@ -1,0 +1,48 @@
+services:
+  frontend:
+    image: "wiirtex/dengovie-frontend:16fe8b324237"
+    container_name: dengovie-frontend
+    restart: unless-stopped
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+  backend:
+    image: "wiirtex/dengovie-backend:0d1f29e56736"
+    container_name: dengovie-backend
+    env_file: ".env"
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./.env:/go/app/.env
+    depends_on:
+      - db-migrations
+  db:
+    image: postgres:latest
+    container_name: postgres_container
+    volumes:
+      - pg-data:/var/lib/postgresql/data/pgdata
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: dengovie
+      PGDATA: /var/lib/postgresql/data/pgdata
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres -d dengovie" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    restart: unless-stopped
+  db-migrations:
+    image: gomicro/goose
+    command: goose -dir /migrations postgres "postgresql://db:5432/dengovie?user=postgres&password=pass&sslmode=disable" up
+    volumes:
+      - pg-data:/var/lib/postgresql/data/pgdata
+      - ./migrations:/migrations
+    depends_on:
+      db:
+        condition: service_healthy
+        restart: true
+volumes:
+  pg-data:

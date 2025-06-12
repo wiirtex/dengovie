@@ -9,11 +9,11 @@ test-cov:
 
 test-env-up:
 	touch .env
-	docker run -d -e POSTGRES_PASSWORD=pass -e POSTGRES_DB=dengovie -p 5432:5432 --name=dengovie postgres
+	docker run -d -e POSTGRES_PASSWORD=pass -e POSTGRES_DB=dengovie -p 5432:5432 --name=db postgres
 
 test-env-down:
-	-docker kill dengovie
-	docker rm dengovie
+	-docker kill db
+	docker rm db
 
 db-create:
 	@[ "$(NAME)" ] || ( echo '💥 Please use:  make NAME="create_pages" db-create'; exit 1 )

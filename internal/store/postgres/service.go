@@ -21,7 +21,11 @@ func New(connString string) (*Repo, error) {
 		return nil, fmt.Errorf("sql.Open: %w", err)
 	}
 
-	return &Repo{
+	r := &Repo{
 		db: db,
-	}, nil
+	}
+
+	r.MigrationsUp()
+
+	return r, nil
 }

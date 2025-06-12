@@ -2,6 +2,7 @@ package middlewares
 
 import (
 	"github.com/gin-gonic/gin"
+	"log"
 )
 
 var allowList = map[string]bool{
@@ -10,6 +11,7 @@ var allowList = map[string]bool{
 }
 
 func CORSMiddleware(c *gin.Context) {
+	log.Println("origin:", c.Request.Header.Get("Origin"))
 	if origin := c.Request.Header.Get("Origin"); allowList[origin] {
 		c.Writer.Header().Set("Access-Control-Allow-Origin", origin)
 	}

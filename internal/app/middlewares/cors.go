@@ -6,8 +6,9 @@ import (
 )
 
 var allowList = map[string]bool{
-	"http://localhost:5173":  true,
-	"http://backend.ingress": true,
+	"http://localhost:5173":  true, // local development (frontend)
+	"http://backend.ingress": true, // production (ingress for backend)
+	"http://localhost:8080":  true, // local development (swagger to ingress)
 }
 
 func CORSMiddleware(c *gin.Context) {

@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose --file compose.yaml convert
+    kompose.version: 1.36.0 (HEAD)
+  labels:
+    io.kompose.service: frontend
+  name: frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: frontend
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose --file compose.yaml convert
+        kompose.version: 1.36.0 (HEAD)
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "80"
+        prometheus.io/path: "/nginx_status"  # Активируйте в конфиге Nginx
+      labels:
+        io.kompose.service: frontend
+    spec:
+      containers:
+        - image: wiirtex/dengovie-frontend:cae14942f7cb
+          env:
+            - name: K8S_RUN
+              value: "true"
+          name: dengovie-frontend
+          ports:
+            - containerPort: 5173
+              protocol: TCP
+      restartPolicy: Always

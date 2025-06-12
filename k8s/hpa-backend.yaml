@@ -1,0 +1,31 @@
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: backend-autoscaler
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: backend
+  minReplicas: 2   # Минимальное количество подов
+  maxReplicas: 10  # Максимальное количество подов
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 60  # Целевое использование CPU (60%)
+  behavior:
+    scaleDown:
+      stabilizationWindowSeconds: 30  # Минимум 30 секунд перед уменьшением
+      policies:
+        - type: Percent
+          value: 50
+          periodSeconds: 20
+    scaleUp:
+      stabilizationWindowSeconds: 10
+      policies:
+        - type: Percent
+          value: 50
+          periodSeconds: 15

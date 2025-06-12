@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose --file compose.yaml convert
+    kompose.version: 1.36.0 (HEAD)
+  labels:
+    io.kompose.service: backend
+  name: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: backend
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose --file compose.yaml convert
+        kompose.version: 1.36.0 (HEAD)
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8080"  # Порт вашего приложения
+        prometheus.io/path: "/metrics"  # Путь к метрикам
+      labels:
+        io.kompose.service: backend
+    spec:
+      containers:
+        - envFrom:
+            - configMapRef:
+                name: env
+          image: wiirtex/dengovie-backend:e6ee6b722753
+          name: dengovie-backend
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          volumeMounts:
+            - mountPath: /go/app/.env
+              name: backend-cm0
+              subPath: .env
+          resources:
+            requests:
+              cpu: 500m  # 0.5 ядра
+              memory: 128Mi
+            limits:
+              cpu: 1000m  # 1 ядра
+              memory: 512Mi
+      restartPolicy: Always
+      volumes:
+        - configMap:
+            items:
+              - key: .env
+                path: .env
+            name: backend-cm0
+          name: backend-cm0

@@ -1,0 +1,9 @@
+apiVersion: v1
+data:
+  JWT_TOKEN: na_prikole
+  POSTGRES_CONN_STRING: postgresql://db:5432/dengovie?user=postgres&password=pass&sslmode=disable
+kind: ConfigMap
+metadata:
+  labels:
+    io.kompose.service: backend-env
+  name: env

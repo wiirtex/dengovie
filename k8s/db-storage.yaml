@@ -1,0 +1,103 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: db
+spec:
+  accessModes:
+    - ReadWriteOnce
+  capacity:
+    storage: 2Gi
+  hostPath:
+    path: /data/db
+  storageClassName: standard
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: db
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  volumeName: db
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: db
+type: Opaque
+data:
+  POSTGRES_USER: cG9zdGdyZXM=     # printf postgres | base64
+  POSTGRES_PASSWORD: cGFzcw==     # printf pass | base64
+  POSTGRES_DB: ZGVuZ292aWU=       # printf dengovie | base64
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: db
+  labels:
+    app: db
+    role: service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: db
+      role: service
+  serviceName: db
+  template:
+    metadata:
+      labels:
+        app: db
+        role: service
+    spec:
+      containers:
+        - name: db
+          image: postgres:latest
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  key: POSTGRES_USER
+                  name: db
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: POSTGRES_PASSWORD
+                  name: db
+            - name: POSTGRES_DB
+              valueFrom:
+                secretKeyRef:
+                  key: POSTGRES_DB
+                  name: db
+          ports:
+            - containerPort: 5432
+              name: db
+              protocol: TCP
+          volumeMounts:
+            - name: db
+              mountPath: /var/lib/postgresql/data
+      volumes:
+        - name: db
+          persistentVolumeClaim:
+            claimName: db
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: db
+  labels:
+    app: db
+    role: service
+spec:
+  selector:
+    app: db
+    role: service
+  type: NodePort
+  ports:
+    - name: db
+      port: 5432
+      targetPort: 5432
+      protocol: TCP

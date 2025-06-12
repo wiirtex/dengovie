@@ -70,7 +70,8 @@ func (c *Controller) Login(ctx *gin.Context) {
 		return
 	}
 
-	ctx.SetCookie("access-token", signetJWT, 0, "", "", false, true)
+	ctx.SetSameSite(http.SameSiteLaxMode)
+	ctx.SetCookie("access-token", signetJWT, 0, "/", "dengovie.ingress", false, true)
 }
 
 // Logout godoc
@@ -80,7 +81,8 @@ func (c *Controller) Login(ctx *gin.Context) {
 //	@Success		200		{string}	string			"ok"
 //	@Router        /auth/logout [post]
 func (c *Controller) Logout(ctx *gin.Context) {
-	ctx.SetCookie("access-token", "", 0, "", "", false, true)
+	ctx.SetSameSite(http.SameSiteLaxMode)
+	ctx.SetCookie("access-token", "", 0, "/", "dengovie.ingress", false, true)
 }
 
 type LoginRequest struct {

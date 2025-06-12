@@ -13,7 +13,13 @@ export default defineConfig({
   },
   server: {
     host: true,
-    port: 5173
+    port: 5173,
+    allowedHosts: ['http://frontend.ingress'],
+    cors: {
+      origin: ['http://frontend.ingress', 'http://localhost:5173'],
+      methods: ['POST', 'OPTIONS', 'GET', 'PUT', 'DELETE'],
+      allowedHeaders: ['Content-Type']
+    },
   },
   preview: {
     host: true,

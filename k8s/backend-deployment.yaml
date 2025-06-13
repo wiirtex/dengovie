@@ -20,7 +20,7 @@ spec:
         kompose.cmd: kompose --file compose.yaml convert
         kompose.version: 1.36.0 (HEAD)
         prometheus.io/scrape: "true"
-        prometheus.io/port: "8080"  # Порт вашего приложения
+        prometheus.io/port: "http"  # Порт вашего приложения
         prometheus.io/path: "/metrics"  # Путь к метрикам
       labels:
         io.kompose.service: backend
@@ -29,7 +29,7 @@ spec:
         - envFrom:
             - configMapRef:
                 name: env
-          image: wiirtex/dengovie-backend:e6ee6b722753
+          image: wiirtex/dengovie-backend:latest
           name: dengovie-backend
           ports:
             - containerPort: 8080

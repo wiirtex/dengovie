@@ -17,9 +17,9 @@ spec:
       annotations:
         kompose.cmd: kompose --file compose.yaml convert
         kompose.version: 1.36.0 (HEAD)
-        prometheus.io/scrape: "true"
-        prometheus.io/port: "80"
-        prometheus.io/path: "/nginx_status"  # Активируйте в конфиге Nginx
+#        prometheus.io/scrape: "true"
+#        prometheus.io/port: "80"
+#        prometheus.io/path: "/nginx_status"  # Активируйте в конфиге Nginx
       labels:
         io.kompose.service: frontend
     spec:

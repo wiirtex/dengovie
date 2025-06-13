@@ -7,7 +7,7 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: backend
-  minReplicas: 2   # Минимальное количество подов
+  minReplicas: 1   # Минимальное количество подов
   maxReplicas: 10  # Максимальное количество подов
   metrics:
     - type: Resource

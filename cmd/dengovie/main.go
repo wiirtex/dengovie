@@ -10,6 +10,7 @@ import (
 	"dengovie/internal/store/postgres"
 	"dengovie/internal/utils/env"
 	"fmt"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"log"
 	"os"
 
@@ -44,6 +45,7 @@ func main() {
 	r := gin.Default()
 
 	r.Use(middlewares.CORSMiddleware)
+	r.Use(middlewares.PrometheusMiddleware())
 
 	connString, found := os.LookupEnv("POSTGRES_CONN_STRING")
 	if !found {
@@ -94,6 +96,8 @@ func main() {
 	}
 
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	r.GET("/metrics", gin.WrapH(promhttp.Handler()))
+
 	err = r.Run("0.0.0.0:8080")
 	if err != nil {
 		log.Fatal("run: %w", err)

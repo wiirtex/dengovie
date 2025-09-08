@@ -43,6 +43,24 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js (for frontend analysis)
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'npm'
+          cache-dependency-path: client-app/package-lock.json
+
+      - name: Install frontend dependencies
+        working-directory: client-app
+        run: npm install
+
+      - name: Run tests with coverage (if needed)
+        working-directory: client-app
+        run: npm test -- --coverage --watchAll=false
+        
       - name: Analyze with SonarCloud
 
         # You can pin the exact commit or the version.

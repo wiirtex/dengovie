@@ -63,5 +63,4 @@ jobs:
             -Dsonar.exclusions=**/node_modules/**,**/.github/**,**/tests/**,**/venv/**,**/components/product/*.test.jsx,**/frontend/coverage/**,**Dockerfile**
             -Dsonar.sourceEncoding=UTF-8
           
-          # When you need the analysis to take place in a directory other than the one from which it was launched, default is .
           projectBaseDir: .

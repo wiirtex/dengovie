@@ -53,5 +53,8 @@ jobs:
             -Dsonar.sources=.
             -Dsonar.exclusions=**/node_modules/**,**/.github/**,**/tests/**,**/venv/**,**/components/product/*.test.jsx,**/frontend/coverage/**,**Dockerfile**
             -Dsonar.sourceEncoding=UTF-8
+            -Dsonar.javascript.lcov.reportPaths=client-app/coverage/lcov.info
+            -Dsonar.tests=client-app/src
+            -Dsonar.test.inclusions=**/*.test.jsx,**/*.test.js,**/*.test.tsx,**/*.test.ts
           
           projectBaseDir: .

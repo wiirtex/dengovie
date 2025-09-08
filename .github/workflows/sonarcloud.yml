@@ -57,7 +57,7 @@ jobs:
             # mandatory
             -Dsonar.organization=dengbang
             -Dsonar.qualitygate.wait=true
-            -Dsonar.projectKey=dengovie
+            -Dsonar.projectKey=wiirtex_dengovie
             -Dsonar.projectName=dengovie
             -Dsonar.sources=.
             -Dsonar.exclusions=**/node_modules/**,**/.github/**,**/tests/**,**/venv/**,**/components/product/*.test.jsx,**/frontend/coverage/**,**Dockerfile**

@@ -33,6 +33,13 @@ jobs:
       - name: Run tests with coverage (if needed)
         working-directory: client-app
         run: npm test -- --coverage
+
+      - name: Check coverage files
+        working-directory: client-app
+        run: |
+          ls -la
+          ls -la coverage/ || echo "Coverage directory not found"
+          find . -name "lcov.info" -o -name "coverage-final.json" || echo "No coverage files found"
         
       - name: Analyze with SonarCloud
 

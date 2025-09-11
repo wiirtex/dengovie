@@ -32,7 +32,7 @@ jobs:
 
       - name: Run tests with coverage (if needed)
         working-directory: client-app
-        run: npm test -- --coverage --reporter=lcov
+        run: npm test -- --coverage
 
       - name: Check coverage files
         working-directory: client-app

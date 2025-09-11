@@ -103,7 +103,7 @@ func (c *Client) messageHandler(ctx context.Context, _ *tg.Bot, update *models.U
 			NewChatID: chatID,
 		})
 		if errUpdateUser != nil {
-			log.Printf("failed to update user's chatID: %w", errUpdateUser)
+			log.Printf("failed to update user's chatID: %v", errUpdateUser)
 			return
 		}
 
@@ -128,7 +128,7 @@ func (c *Client) sendMessage(ctx context.Context, chatID int64, format string, a
 
 	msg := format
 	if len(args) != 0 {
-		msg = fmt.Sprintf(format, args)
+		msg = fmt.Sprintf(format, args...)
 	}
 
 	fmt.Println(chatID)

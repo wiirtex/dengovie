@@ -15,3 +15,8 @@ packages:
       dir: internal/mocks/service/users_mock
     interfaces:
       Service:
+  dengovie/internal/service/telegram/types:
+    config:
+      dir: internal/mocks/service/telegram_mock
+    interfaces:
+      Client:

@@ -10,6 +10,16 @@ export default defineConfig({
   test: {
     environment: 'jsdom',
     setupFiles: ['src/setupTests.ts'], // Подключаем setup файл
+    reporters: [
+      'default', // Vitest's default reporter so that terminal output is still visibles
+    ],
+    coverage: {
+      provider: 'istanbul',
+      reporter: [
+        'text',
+        ["lcov", { outputFile: "lcov.info", silent: false }],
+      ]
+    }
   },
   server: {
     host: true,

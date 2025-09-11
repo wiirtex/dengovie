@@ -1,22 +1,22 @@
 package main
 
 import (
+	"context"
 	_ "dengovie/docs"
 	"dengovie/internal/app/dengovie"
 	"dengovie/internal/app/middlewares"
 	_ "dengovie/internal/config"
 	"dengovie/internal/service/debts"
+	"dengovie/internal/service/telegram"
 	"dengovie/internal/service/users"
 	"dengovie/internal/store/postgres"
 	"dengovie/internal/utils/env"
 	"fmt"
-	"github.com/prometheus/client_golang/prometheus/promhttp"
-	"log"
-	"os"
-
 	"github.com/gin-gonic/gin"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
+	"log"
 )
 
 //	@title			Swagger Example API
@@ -31,7 +31,8 @@ import (
 //	@license.name	Apache 2.0
 //	@license.url	http://www.apache.org/licenses/LICENSE-2.0.html
 
-//	@host		api.dengovie.ingress
+//	@host localhost:8080
+//	api.dengovie.ingress
 //	@BasePath	/api/v1
 
 //	@securityDefinitions.basic	BasicAuth
@@ -44,15 +45,11 @@ func main() {
 
 	r := gin.Default()
 
+	r.Use(middlewares.PanicCatcher)
 	r.Use(middlewares.CORSMiddleware)
 	r.Use(middlewares.PrometheusMiddleware())
 
-	connString, found := os.LookupEnv("POSTGRES_CONN_STRING")
-	if !found {
-		log.Fatal("POSTGRES_CONN_STRING environment variable not found")
-	}
-
-	storage, err := postgres.New(connString)
+	storage, err := postgres.New()
 	if err != nil {
 		log.Fatal(fmt.Errorf("postgres.New: %w", err))
 	}
@@ -60,7 +57,14 @@ func main() {
 	debtsService := debts.New(storage)
 	usersService := users.New(storage)
 
-	c := dengovie.NewController(storage, debtsService, usersService)
+	bot, err := telegram.NewClient(storage)
+	if err != nil {
+		log.Fatalf("can not init telegram bot: %v", err)
+	}
+	ctx := context.Background()
+	bot.Start(ctx)
+
+	c := dengovie.NewController(storage, debtsService, usersService, bot)
 
 	v1 := r.Group("/api/v1")
 	{

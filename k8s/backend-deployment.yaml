@@ -20,7 +20,7 @@ spec:
         kompose.cmd: kompose --file compose.yaml convert
         kompose.version: 1.36.0 (HEAD)
         prometheus.io/scrape: "true"
-        prometheus.io/port: "http"  # Порт вашего приложения
+        prometheus.io/port: "8080"  # Порт вашего приложения
         prometheus.io/path: "/metrics"  # Путь к метрикам
       labels:
         io.kompose.service: backend

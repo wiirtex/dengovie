@@ -92,7 +92,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/dengovie.CodeRequest"
                         }
                     }
                 ],
@@ -358,6 +358,14 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "dengovie.CodeRequest": {
+            "type": "object",
+            "properties": {
+                "telegramAlias": {
+                    "type": "string"
+                }
+            }
+        },
         "dengovie.GetMeResponse": {
             "type": "object",
             "properties": {
@@ -487,7 +495,7 @@ const docTemplate = `{
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
-	Host:             "api.dengovie.ingress",
+	Host:             "localhost:8080",
 	BasePath:         "/api/v1",
 	Schemes:          []string{},
 	Title:            "Swagger Example API",

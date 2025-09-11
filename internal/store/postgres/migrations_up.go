@@ -1,6 +1,7 @@
 package postgres
 
 import (
+	"dengovie/internal/utils/env"
 	"embed"
 	"log"
 
@@ -11,6 +12,8 @@ import (
 var embedMigrations embed.FS
 
 func (r *Repo) MigrationsUp() {
+	env.InitEnvs(nil)
+
 	// setup database
 	goose.SetBaseFS(embedMigrations)
 

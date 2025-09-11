@@ -1,76 +1,19 @@
+# servicemonitor-backend.yaml
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: backend-monitor
-  namespace: default
+  name: backend-service-monitor
+  namespace: default # Поместите в тот же namespace, где работает ваш бэкенд
   labels:
-    release: prometheus # Должен совпадать с релизом Prometheus
+    release: prometheus-stack # Должен совпадать с релизом prometheus stack
 spec:
   selector:
     matchLabels:
-      io.kompose.service: backend
+      app: backend # Выбираем сервисы с этим лейблом
+  endpoints:
+    - port: "8080" # Имя порта в сервисе (или number: 8080)
+      path: /metrics # Путь к метрикам
+      interval: 15s # Интервал сбора метрик
   namespaceSelector:
-    any: true
-  endpoints:
-    - port: "http"
-      interval: 15s
-      path: /metrics
----
-# Монитор для фронтенда
-apiVersion: monitoring.coreos.com/v1
-kind: ServiceMonitor
-metadata:
-  name: frontend-monitor
-  namespace: default
-spec:
-  selector:
-    matchLabels:
-      app: frontend
-  endpoints:
-    - port: http
-      interval: 15s
-      path: /nginx_status
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
-metadata:
-  name: prometheus-discovery
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: prometheus-k8s
-subjects:
-  - kind: ServiceAccount
-    name: prometheus-k8s
-    namespace: default
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
-metadata:
-  name: prometheus-k8s
-rules:
-  - apiGroups: [""]
-    resources:
-      - nodes
-      - services
-      - endpoints
-      - pods
-    verbs: ["get", "list", "watch"]
-  - apiGroups: ["monitoring.coreos.com"]
-    resources: ["servicemonitors", "podmonitors"]
-    verbs: ["get", "list", "watch"]
-  - nonResourceURLs: ["/metrics"]
-    verbs: ["get"]
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
-metadata:
-  name: prometheus-k8s
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: prometheus-k8s
-subjects:
-  - kind: ServiceAccount
-    name: prometheus-k8s
-    namespace: default
+    matchNames:
+      - default # Ищем сервисы в namespace 'default'

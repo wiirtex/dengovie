@@ -8,9 +8,10 @@ type Group struct {
 }
 
 type User struct {
-	ID    domain.UserID
-	Name  string
-	Alias string
+	ID     domain.UserID
+	Name   string
+	Alias  string
+	ChatID int64
 }
 
 type UserDebt struct {

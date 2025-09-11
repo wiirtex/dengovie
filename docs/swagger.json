@@ -15,7 +15,7 @@
         },
         "version": "1.0"
     },
-    "host": "api.dengovie.ingress",
+    "host": "localhost:8080",
     "basePath": "/api/v1",
     "paths": {
         "/auth/login": {
@@ -86,7 +86,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/dengovie.CodeRequest"
                         }
                     }
                 ],
@@ -352,6 +352,14 @@
         }
     },
     "definitions": {
+        "dengovie.CodeRequest": {
+            "type": "object",
+            "properties": {
+                "telegramAlias": {
+                    "type": "string"
+                }
+            }
+        },
         "dengovie.GetMeResponse": {
             "type": "object",
             "properties": {

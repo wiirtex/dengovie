@@ -4,7 +4,9 @@ name: post-deploy
 on:
   push:
     branches:
-      - all
+      - main
+  pull_request:
+    branches: [ "main" ]
 
 jobs:
   dockerhub-backend:

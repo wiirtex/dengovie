@@ -31,7 +31,7 @@ jobs:
 
   deploy-backend:
     runs-on: ubuntu-latest
-    requires:
+    needs:
       - dockerhub-backend
     steps:
       - name: Configure Kubeconfig

@@ -10,6 +10,7 @@ var allowList = map[string]bool{
 	"http://api.dengovie.ingress": true, // production (ingress for backend)
 	"http://localhost:8080":       true, // local development (swagger to ingress)
 	"http://dengovie.ingress":     true, // production (frontend)
+	"":                            true, // test (tmp)
 }
 
 func CORSMiddleware(c *gin.Context) {

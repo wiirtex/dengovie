@@ -44,6 +44,7 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
-          file: ./client-app/Dockerfile
+          context: ./client-app/
+          file: ./Dockerfile
           push: true
           tags: ${{ vars.DOCKERHUB_USERNAME }}/dengovie-frontend:latest

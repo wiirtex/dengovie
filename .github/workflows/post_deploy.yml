@@ -4,7 +4,7 @@ name: post-deploy
 on:
   push:
     branches:
-      - main
+      - all
 
 jobs:
   dockerhub-backend:
@@ -22,7 +22,6 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
-          context: ./
           file: ./Dockerfile
           push: true
           tags: ${{ vars.DOCKERHUB_USERNAME }}/dengovie-backend:latest
@@ -42,9 +41,7 @@ jobs:
         uses: docker/setup-buildx-action@v3
       - name: Build and push
         uses: docker/build-push-action@v6
-
         with:
-          context: ./client-app
           file: ./client-app/Dockerfile
           push: true
           tags: ${{ vars.DOCKERHUB_USERNAME }}/dengovie-frontend:latest

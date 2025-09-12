@@ -9,15 +9,15 @@ test-cov:
 
 test-env-up:
 	touch .env
-	docker run -d -e POSTGRES_PASSWORD=pass -e POSTGRES_DB=dengovie -p 5432:5432 --name=dengovie postgres
+	docker run -d -e POSTGRES_PASSWORD=pass -e POSTGRES_DB=dengovie -p 5432:5432 --name=db postgres
 
 test-env-down:
-	-docker kill dengovie
-	docker rm dengovie
+	-docker kill db
+	docker rm db
 
 db-create:
 	@[ "$(NAME)" ] || ( echo '💥 Please use:  make NAME="create_pages" db-create'; exit 1 )
-	 goose -dir migrations create "$(NAME)" sql
+	 goose -dir internal/store/postgres/migrations create "$(NAME)" sql
 
 db-create-test-migration:
 	@[ "$(NAME)" ] || ( echo '💥 Please use:  make NAME="create_pages" db-create'; exit 1 )
@@ -27,7 +27,7 @@ db-up-test-data:
 	goose -dir test/test_migrations postgres $(POSTGRES_CONN_STRING) up
 
 db-up:
-	goose -dir migrations postgres $(POSTGRES_CONN_STRING) up
+	goose -dir internal/store/postgres/migrations postgres $(POSTGRES_CONN_STRING) up
 
 binaries:
 	go install github.com/pressly/goose/v3/cmd/goose@latest

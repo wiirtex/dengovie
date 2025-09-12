@@ -1,5 +1,10 @@
 basePath: /api/v1
 definitions:
+  dengovie.CodeRequest:
+    properties:
+      telegramAlias:
+        type: string
+    type: object
   dengovie.GetMeResponse:
     properties:
       alias:
@@ -137,7 +142,7 @@ paths:
         name: telegramAlias
         required: true
         schema:
-          type: string
+          $ref: '#/definitions/dengovie.CodeRequest'
       produces:
       - application/json
       responses:

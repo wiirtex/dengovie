@@ -7,11 +7,15 @@ import (
 type Key string
 
 const (
-	KeyJwtToken Key = "JWT_TOKEN"
+	KeyJwtToken           Key = "JWT_TOKEN"
+	KeyPostgresConnString     = "POSTGRES_CONN_STRING"
+	KeyTelegramBotToken       = "TG_BOT_TOKEN"
 )
 
 var allEnvKeys = []Key{
 	KeyJwtToken,
+	KeyPostgresConnString,
+	KeyTelegramBotToken,
 }
 
 var envVars = map[Key]string{}

@@ -36,7 +36,13 @@ export default defineConfig({
   },
   server: {
     host: true,
-    port: 5173
+    port: 5173,
+    allowedHosts: ['dengovie.ingress'],
+    cors: {
+      origin: ['http://dengovie.ingress', 'http://localhost:5173'],
+      methods: ['POST', 'OPTIONS', 'GET', 'PUT', 'DELETE'],
+      allowedHeaders: ['Content-Type', 'Cookie', 'Content-Length', 'Accept-Encoding', 'X-CSRF-Token', 'Authorization', 'Pragma', 'accept', 'origin', 'Cache-Control', 'X-Requested-With']
+    },
   },
   preview: {
     host: true,

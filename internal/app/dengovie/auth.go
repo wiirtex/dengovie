@@ -2,9 +2,12 @@ package dengovie
 
 import (
 	"context"
+	"database/sql"
 	storeTypes "dengovie/internal/store/types"
 	"dengovie/internal/utils/jwt"
 	"dengovie/internal/web"
+	"errors"
+	"fmt"
 	"log"
 	"net/http"
 
@@ -17,13 +20,58 @@ import (
 //	@Description  request-otp-code
 //	@Accept       json
 //	@Produce      json
-//	@Param			telegramAlias 	body 	string	true	 "telegramAlias"
+//	@Param			telegramAlias 	body 	CodeRequest	true	 "telegramAlias"
 //	@Success		200		{string}	string			"ok, код отправлен"
 //	@Failure		400		{object}	web.APIError	"данные невалидные"
 //	@Failure		404		{object}	web.APIError	"клиент не зарегистрирован в боте"
 //	@Router        /auth/request_code [post]
 func (c *Controller) RequestCode(ctx *gin.Context) {
+
+	req := CodeRequest{}
+	err := ctx.ShouldBindBodyWithJSON(&req)
+	if err != nil {
+		log.Println("error ShouldBindBodyWithJSON:", err)
+		ctx.Status(http.StatusBadRequest)
+		return
+	}
+
+	user, err := c.storage.GetUserByAlias(context.TODO(), storeTypes.GetUserByAliasInput{
+		Alias: req.TelegramAlias,
+	})
+	if err != nil {
+		if !errors.Is(err, sql.ErrNoRows) {
+			log.Println("storage.GetUserByAlias:", err)
+			ctx.Status(http.StatusInternalServerError)
+			return
+		}
+
+		var errCreate error
+		user, errCreate = c.storage.CreateUser(ctx, storeTypes.CreateUserInput{
+			Name:  fmt.Sprintf("Имя %v", req.TelegramAlias),
+			Alias: req.TelegramAlias,
+		})
+		if errCreate != nil {
+			log.Println("storage.CreateUser:", err)
+			ctx.Status(http.StatusInternalServerError)
+			return
+		}
+
+		ctx.JSON(http.StatusCreated, gin.H{"message": "А теперь напиши в бота, чтобы получить код доступа"})
+		return
+	}
+
+	err = c.sender.SendMessageToUserByAlias(ctx, user.Alias, "Привет! Кое-кто запросил код для входа: `111`")
+	if err != nil {
+		log.Println("sender.SendMessageToUserByAlias:", err)
+		ctx.Status(http.StatusInternalServerError)
+		return
+	}
+
 	ctx.Status(http.StatusOK)
+}
+
+type CodeRequest struct {
+	TelegramAlias string `json:"telegramAlias"`
 }
 
 // Login godoc
@@ -70,7 +118,8 @@ func (c *Controller) Login(ctx *gin.Context) {
 		return
 	}
 
-	ctx.SetCookie("access-token", signetJWT, 0, "", "", false, true)
+	ctx.SetSameSite(http.SameSiteLaxMode)
+	ctx.SetCookie("access-token", signetJWT, 0, "/", "dengovie.ingress", false, true)
 }
 
 // Logout godoc
@@ -80,7 +129,8 @@ func (c *Controller) Login(ctx *gin.Context) {
 //	@Success		200		{string}	string			"ok"
 //	@Router        /auth/logout [post]
 func (c *Controller) Logout(ctx *gin.Context) {
-	ctx.SetCookie("access-token", "", 0, "", "", false, true)
+	ctx.SetSameSite(http.SameSiteLaxMode)
+	ctx.SetCookie("access-token", "", 0, "/", "dengovie.ingress", false, true)
 }
 
 type LoginRequest struct {

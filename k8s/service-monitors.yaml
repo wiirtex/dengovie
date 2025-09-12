@@ -1,0 +1,19 @@
+# servicemonitor-backend.yaml
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: backend-service-monitor
+  namespace: default # Поместите в тот же namespace, где работает ваш бэкенд
+  labels:
+    release: prometheus-stack # Должен совпадать с релизом prometheus stack
+spec:
+  selector:
+    matchLabels:
+      app: backend # Выбираем сервисы с этим лейблом
+  endpoints:
+    - port: "8080" # Имя порта в сервисе (или number: 8080)
+      path: /metrics # Путь к метрикам
+      interval: 15s # Интервал сбора метрик
+  namespaceSelector:
+    matchNames:
+      - default # Ищем сервисы в namespace 'default'

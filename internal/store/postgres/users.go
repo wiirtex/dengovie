@@ -10,7 +10,7 @@ import (
 func (r *Repo) GetUserByAlias(ctx context.Context, input types.GetUserByAliasInput) (types.User, error) {
 
 	query := `
-select u.id, u.name, u.alias
+select u.id, u.name, u.alias, u.chat_id
 from users u
 where u.alias = $1
 `
@@ -21,7 +21,7 @@ where u.alias = $1
 	}
 
 	var user types.User
-	err := row.Scan(&user.ID, &user.Name, &user.Alias)
+	err := row.Scan(&user.ID, &user.Name, &user.Alias, &user.ChatID)
 	if err != nil {
 		return user, fmt.Errorf("row.Scan: %w", err)
 	}
@@ -32,7 +32,7 @@ where u.alias = $1
 func (r *Repo) GetUserByID(ctx context.Context, input types.GetUserByIDInput) (types.User, error) {
 
 	query := `
-select u.id, u.name, u.alias
+select u.id, u.name, u.alias, u.chat_id
 from users u
 where u.id = $1
 `
@@ -43,7 +43,7 @@ where u.id = $1
 	}
 
 	var user types.User
-	err := row.Scan(&user.ID, &user.Name, &user.Alias)
+	err := row.Scan(&user.ID, &user.Name, &user.Alias, &user.ChatID)
 	if err != nil {
 		return user, fmt.Errorf("row.Scan: %w", err)
 	}
@@ -125,4 +125,40 @@ where user_id = $1
 	}
 
 	return nil
+}
+
+func (r *Repo) UpdateUserChatID(ctx context.Context, input types.UpdateUserChatIDInput) error {
+
+	query := `
+update users
+set chat_id = $2
+where id = $1
+`
+
+	_, err := r.db.ExecContext(ctx, query, input.UserID, input.NewChatID)
+	if err != nil {
+		return fmt.Errorf("db.ExecContext: %w", err)
+	}
+
+	return nil
+}
+
+func (r *Repo) CreateUser(ctx context.Context, input types.CreateUserInput) (types.User, error) {
+	query := `
+insert into users (name, alias)
+values ($1, $2)
+returning id, name, alias, chat_id 
+`
+	row := r.db.QueryRowContext(ctx, query, input.Name, input.Alias)
+	if row.Err() != nil {
+		return types.User{}, fmt.Errorf("db.QueryContext: %w", row.Err())
+	}
+
+	var user types.User
+	err := row.Scan(&user.ID, &user.Name, &user.Alias, &user.ChatID)
+	if err != nil {
+		return user, fmt.Errorf("row.Scan: %w", err)
+	}
+
+	return user, nil
 }

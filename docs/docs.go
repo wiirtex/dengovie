@@ -92,7 +92,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/dengovie.CodeRequest"
                         }
                     }
                 ],
@@ -358,6 +358,14 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "dengovie.CodeRequest": {
+            "type": "object",
+            "properties": {
+                "telegramAlias": {
+                    "type": "string"
+                }
+            }
+        },
         "dengovie.GetMeResponse": {
             "type": "object",
             "properties": {

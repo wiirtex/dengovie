@@ -24,7 +24,7 @@ spec:
         io.kompose.service: frontend
     spec:
       containers:
-        - image: wiirtex/dengovie-frontend:cae14942f7cb
+        - image: wiirtex/dengovie-frontend:latest
           env:
             - name: K8S_RUN
               value: "true"

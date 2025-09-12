@@ -23,11 +23,11 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
         with:
-          context: ./
-          file: ./Dockerfile
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
+          context: ./
+          file: ./Dockerfile
           push: true
           tags: ${{ vars.DOCKERHUB_USERNAME }}/dengovie-backend:latest
 
@@ -44,11 +44,10 @@ jobs:
         uses: docker/setup-qemu-action@v3
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-        with:
-          context: ./client-app
-          file: ./client-app/Dockerfile
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
+          context: ./client-app
+          file: ./client-app/Dockerfile
           push: true
           tags: ${{ vars.DOCKERHUB_USERNAME }}/dengovie-frontend:latest

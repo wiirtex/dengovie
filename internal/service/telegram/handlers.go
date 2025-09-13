@@ -11,7 +11,7 @@ import (
 )
 
 func (c *client) messageHandler(ctx context.Context, _ *tg.Bot, update *models.Update) {
-	
+
 	chatID := update.Message.Chat.ID
 	userName := update.Message.Chat.Username
 
@@ -30,6 +30,15 @@ func (c *client) messageHandler(ctx context.Context, _ *tg.Bot, update *models.U
 			}
 			return
 		}
+
+		log.Printf("failed to get user: %v", err)
+		err = c.sendMessage(ctx,
+			update.Message.Chat.ID,
+			"Что-то пошло не так. Попробуй позже")
+		if err != nil {
+			log.Printf("failed to send message to user: %v", err)
+		}
+		return
 	}
 
 	if user.ChatID != chatID {

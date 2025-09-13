@@ -20,6 +20,11 @@ packages:
       dir: internal/mocks/service/telegram_mock
     interfaces:
       Client:
+  dengovie/internal/service/telegram:
+    config:
+      dir: internal/mocks/service/telegram_internal_mock
+    interfaces:
+      bot:
   dengovie/internal/utils/jwt/types:
     config:
       dir: internal/mocks/utils/jwt_mock

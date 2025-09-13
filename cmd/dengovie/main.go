@@ -11,6 +11,7 @@ import (
 	"dengovie/internal/service/users"
 	"dengovie/internal/store/postgres"
 	"dengovie/internal/utils/env"
+	"dengovie/internal/utils/jwt"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
@@ -45,9 +46,13 @@ func main() {
 
 	r := gin.Default()
 
-	r.Use(middlewares.PanicCatcher)
-	r.Use(middlewares.CORSMiddleware)
-	r.Use(middlewares.PrometheusMiddleware())
+	jwtProcessor := jwt.New()
+
+	middlewaresService := middlewares.New(jwtProcessor)
+
+	r.Use(middlewaresService.PanicCatcher)
+	r.Use(middlewaresService.CORSMiddleware)
+	r.Use(middlewaresService.PrometheusMiddleware())
 
 	storage, err := postgres.New()
 	if err != nil {
@@ -64,7 +69,7 @@ func main() {
 	ctx := context.Background()
 	bot.Start(ctx)
 
-	c := dengovie.NewController(storage, debtsService, usersService, bot)
+	c := dengovie.NewController(storage, debtsService, usersService, bot, jwtProcessor)
 
 	v1 := r.Group("/api/v1")
 	{
@@ -77,14 +82,14 @@ func main() {
 
 		groups := v1.Group("/groups")
 		{
-			groups.Use(middlewares.CheckAuth)
+			groups.Use(middlewaresService.CheckAuth)
 			groups.GET("", c.ListUserGroups)
 			groups.GET("/:groupID/users", c.ListUsersInGroup)
 		}
 
 		user := v1.Group("/user")
 		{
-			user.Use(middlewares.CheckAuth)
+			user.Use(middlewaresService.CheckAuth)
 			user.GET("", c.GetMe)
 			user.POST("update_name", c.UpdateName)
 			user.DELETE("delete", c.DeleteUser)
@@ -92,7 +97,7 @@ func main() {
 
 		debtsHandler := v1.Group("/debts")
 		{
-			debtsHandler.Use(middlewares.CheckAuth)
+			debtsHandler.Use(middlewaresService.CheckAuth)
 			debtsHandler.GET("", c.ListDebts)
 			debtsHandler.POST("share", c.ShareDebt)
 			debtsHandler.POST("pay", c.PayDebt)

@@ -5,6 +5,7 @@ import (
 	mockTelegram "dengovie/internal/mocks/service/telegram_mock"
 	mockUsersService "dengovie/internal/mocks/service/users_mock"
 	mockStore "dengovie/internal/mocks/store"
+	mockJwt "dengovie/internal/mocks/utils/jwt_mock"
 	environment "dengovie/internal/utils/env"
 	"testing"
 )
@@ -24,6 +25,7 @@ type env struct {
 	debtsService *mockDebtsService.MockService
 	usersService *mockUsersService.MockService
 	sender       *mockTelegram.MockClient
+	jwt          *mockJwt.MockProcessor
 }
 
 func newEnv(t *testing.T) *env {
@@ -32,6 +34,7 @@ func newEnv(t *testing.T) *env {
 		debtsService: mockDebtsService.NewMockService(t),
 		usersService: mockUsersService.NewMockService(t),
 		sender:       mockTelegram.NewMockClient(t),
+		jwt:          mockJwt.NewMockProcessor(t),
 	}
 }
 
@@ -41,5 +44,6 @@ func newController(e *env) *Controller {
 		e.debtsService,
 		e.usersService,
 		e.sender,
+		e.jwt,
 	)
 }

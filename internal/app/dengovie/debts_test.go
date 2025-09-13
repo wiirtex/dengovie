@@ -7,6 +7,7 @@ import (
 	storeTypes "dengovie/internal/store/types"
 	"dengovie/internal/web"
 	"encoding/json"
+	"github.com/stretchr/testify/require"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -297,6 +298,147 @@ func TestController_ListDebts(t *testing.T) {
 
 			ctx.Writer.WriteHeaderNow()
 			tt.checkAnswerFunc(t, w)
+		})
+	}
+}
+
+func TestController_PayDebt(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+
+	tests := []struct {
+		name      string
+		mocks     func(e *env) (*gin.Context, *httptest.ResponseRecorder)
+		setupCtx  func(ctx *gin.Context)
+		respCheck func(t *testing.T, w *httptest.ResponseRecorder)
+	}{
+		{
+			name: "OK - successful pay debt full amount",
+			mocks: func(e *env) (*gin.Context, *httptest.ResponseRecorder) {
+				w := httptest.NewRecorder()
+				ctx, _ := gin.CreateTestContext(w)
+
+				req, _ := http.NewRequest("", "",
+					bytes.NewBufferString(`{"another_user_id": 456, "full": true, "amount": 0}`))
+				ctx.Request = req
+
+				e.debtsService.EXPECT().PayDebt(mock.Anything, debtsTypes.PayDebtInput{
+					UserID:  domain.UserID(123),
+					PayeeID: domain.UserID(456),
+					Full:    true,
+					Amount:  0,
+				}).Return(nil)
+
+				return ctx, w
+			},
+			setupCtx: func(ctx *gin.Context) {
+				ctx.Set(domain.UserIDKey, domain.UserID(123))
+			},
+			respCheck: func(t *testing.T, w *httptest.ResponseRecorder) {
+				require.Equal(t, http.StatusOK, w.Code)
+			},
+		},
+		{
+			name: "OK - successful pay debt partial amount",
+			mocks: func(e *env) (*gin.Context, *httptest.ResponseRecorder) {
+				w := httptest.NewRecorder()
+				ctx, _ := gin.CreateTestContext(w)
+
+				req, _ := http.NewRequest("", "",
+					bytes.NewBufferString(`{"another_user_id": 456, "full": false, "amount": 500}`))
+				ctx.Request = req
+
+				e.debtsService.EXPECT().PayDebt(mock.Anything, debtsTypes.PayDebtInput{
+					UserID:  domain.UserID(123),
+					PayeeID: domain.UserID(456),
+					Full:    false,
+					Amount:  500,
+				}).Return(nil)
+
+				return ctx, w
+			},
+			setupCtx: func(ctx *gin.Context) {
+				ctx.Set(domain.UserIDKey, domain.UserID(123))
+			},
+			respCheck: func(t *testing.T, w *httptest.ResponseRecorder) {
+				require.Equal(t, http.StatusOK, w.Code)
+			},
+		},
+		{
+			name: "FAIL - userID not found in context",
+			mocks: func(e *env) (*gin.Context, *httptest.ResponseRecorder) {
+				w := httptest.NewRecorder()
+				ctx, _ := gin.CreateTestContext(w)
+
+				req, _ := http.NewRequest("", "",
+					bytes.NewBufferString(`{"another_user_id": 456, "full": true, "amount": 0}`))
+				ctx.Request = req
+
+				return ctx, w
+			},
+			setupCtx: func(ctx *gin.Context) {
+				// Не устанавливаем userID
+			},
+			respCheck: func(t *testing.T, w *httptest.ResponseRecorder) {
+				require.Equal(t, http.StatusBadRequest, w.Code)
+			},
+		},
+		{
+			name: "FAIL - invalid JSON",
+			mocks: func(e *env) (*gin.Context, *httptest.ResponseRecorder) {
+				w := httptest.NewRecorder()
+				ctx, _ := gin.CreateTestContext(w)
+
+				req, _ := http.NewRequest("", "",
+					bytes.NewBufferString(`{"another_user_id": 456, "full": true`)) // Неполный JSON
+				ctx.Request = req
+
+				return ctx, w
+			},
+			setupCtx: func(ctx *gin.Context) {
+				ctx.Set(domain.UserIDKey, domain.UserID(123))
+			},
+			respCheck: func(t *testing.T, w *httptest.ResponseRecorder) {
+				require.Equal(t, http.StatusBadRequest, w.Code)
+			},
+		},
+		{
+			name: "FAIL - service error",
+			mocks: func(e *env) (*gin.Context, *httptest.ResponseRecorder) {
+				w := httptest.NewRecorder()
+				ctx, _ := gin.CreateTestContext(w)
+
+				req, _ := http.NewRequest("", "",
+					bytes.NewBufferString(`{"another_user_id": 456, "full": true, "amount": 0}`))
+				ctx.Request = req
+
+				e.debtsService.EXPECT().PayDebt(mock.Anything, debtsTypes.PayDebtInput{
+					UserID:  domain.UserID(123),
+					PayeeID: domain.UserID(456),
+					Full:    true,
+					Amount:  0,
+				}).Return(assert.AnError)
+
+				return ctx, w
+			},
+			setupCtx: func(ctx *gin.Context) {
+				ctx.Set(domain.UserIDKey, domain.UserID(123))
+			},
+			respCheck: func(t *testing.T, w *httptest.ResponseRecorder) {
+				require.Equal(t, http.StatusInternalServerError, w.Code)
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			e := newEnv(t)
+			c := newController(e)
+
+			ctx, w := tt.mocks(e)
+			tt.setupCtx(ctx)
+
+			c.PayDebt(ctx)
+			tt.respCheck(t, w)
 		})
 	}
 }

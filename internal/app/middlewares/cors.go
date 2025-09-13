@@ -13,7 +13,7 @@ var allowList = map[string]bool{
 	"":                            true, // test (tmp)
 }
 
-func CORSMiddleware(c *gin.Context) {
+func (s *service) CORSMiddleware(c *gin.Context) {
 	log.Println("origin:", c.Request.Header.Get("Origin"))
 	if origin := c.Request.Header.Get("Origin"); allowList[origin] {
 		c.Writer.Header().Set("Access-Control-Allow-Origin", origin)

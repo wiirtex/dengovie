@@ -62,6 +62,7 @@ func (c *Controller) ListUsersInGroup(ctx *gin.Context) {
 	if err != nil {
 		log.Println("strconv.Atoi(groupIDStr):", err)
 		ctx.AbortWithStatus(http.StatusBadRequest)
+		return
 	}
 	groups, err := c.storage.ListUsersInGroup(context.TODO(), storeTypes.ListUsersInGroupInput{
 		GroupID: domain.GroupID(groupID),
@@ -69,6 +70,7 @@ func (c *Controller) ListUsersInGroup(ctx *gin.Context) {
 	if err != nil {
 		log.Println("storage.ListUsersInGroup:", err)
 		ctx.AbortWithStatus(http.StatusInternalServerError)
+		return
 	}
 
 	ctx.JSON(http.StatusOK, groups)

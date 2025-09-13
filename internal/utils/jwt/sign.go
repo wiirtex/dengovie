@@ -8,7 +8,7 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-func Sign(data ...any) (string, error) {
+func (j *jwtProcessor) Sign(data ...any) (string, error) {
 	initOnce()
 
 	claims := jwt.MapClaims{

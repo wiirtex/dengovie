@@ -5,6 +5,7 @@ import (
 	telegramTypes "dengovie/internal/service/telegram/types"
 	usersTypes "dengovie/internal/service/users/types"
 	storeTypes "dengovie/internal/store/types"
+	jwtTypes "dengovie/internal/utils/jwt/types"
 )
 
 // Controller example
@@ -13,6 +14,7 @@ type Controller struct {
 	debtsService debtsTypes.Service
 	usersService usersTypes.Service
 	sender       telegramTypes.Client
+	jwt          jwtTypes.Processor
 }
 
 // NewController example
@@ -21,11 +23,13 @@ func NewController(
 	debtsService debtsTypes.Service,
 	usersService usersTypes.Service,
 	sender telegramTypes.Client,
+	jwt jwtTypes.Processor,
 ) *Controller {
 	return &Controller{
 		storage:      storage,
 		debtsService: debtsService,
 		usersService: usersService,
 		sender:       sender,
+		jwt:          jwt,
 	}
 }

@@ -19,8 +19,8 @@ exclude:
   # Exclude files or packages matching their paths
   paths:
     - \.pb\.go$    # excludes all protobuf generated files
-    - ./internal/mocks\.     # exclude package `pkg/bar`
-    - internal/config/     # exclude package `pkg/bar`
+    - ./mocks/.
+    - .internal/config/
 
 # File name of go-test-coverage breakdown file, which can be used to
 # analyze coverage difference.

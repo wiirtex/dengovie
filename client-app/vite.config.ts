@@ -30,7 +30,7 @@ export default defineConfig({
         '**/__mocks__/**',
         '**/types/**',
         '**/*.{js,ts}', // игнорировать файлы index
-        'src/App.vue',
+        'src/App.vue',                                                                                                                                                                                                                              'src/components/MainPage.vue', 'src/components/UserProfilePanel.vue'
       ]
     }
   },

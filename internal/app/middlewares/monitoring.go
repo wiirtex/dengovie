@@ -31,7 +31,7 @@ func init() {
 	prometheus.MustRegister(httpRequestDuration)
 }
 
-func PrometheusMiddleware() gin.HandlerFunc {
+func (s *service) PrometheusMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		path := c.FullPath()
 		method := c.Request.Method

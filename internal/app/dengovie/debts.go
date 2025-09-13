@@ -139,7 +139,7 @@ func (c *Controller) PayDebt(ctx *gin.Context) {
 	err = ctx.ShouldBindBodyWithJSON(&req)
 	if err != nil {
 		log.Println("error ShouldBindBodyWithJSON:", err)
-		ctx.Status(http.StatusBadRequest)
+		ctx.AbortWithStatus(http.StatusBadRequest)
 		return
 	}
 

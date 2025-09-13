@@ -16,7 +16,7 @@ var (
 	errExpiredToken = errors.New("expired token")
 )
 
-func VerifyJWT(tok string) (map[web.JWTKey]any, error) {
+func (j *jwtProcessor) VerifyJWT(tok string) (map[web.JWTKey]any, error) {
 	initOnce()
 
 	token, err := jwt.Parse(tok, func(token *jwt.Token) (interface{}, error) {

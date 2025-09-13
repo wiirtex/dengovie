@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	storeTypes "dengovie/internal/store/types"
-	"dengovie/internal/utils/jwt"
 	"dengovie/internal/web"
 	"errors"
 	"fmt"
@@ -31,7 +30,7 @@ func (c *Controller) RequestCode(ctx *gin.Context) {
 	err := ctx.ShouldBindBodyWithJSON(&req)
 	if err != nil {
 		log.Println("error ShouldBindBodyWithJSON:", err)
-		ctx.Status(http.StatusBadRequest)
+		ctx.AbortWithStatus(http.StatusBadRequest)
 		return
 	}
 
@@ -41,7 +40,7 @@ func (c *Controller) RequestCode(ctx *gin.Context) {
 	if err != nil {
 		if !errors.Is(err, sql.ErrNoRows) {
 			log.Println("storage.GetUserByAlias:", err)
-			ctx.Status(http.StatusInternalServerError)
+			ctx.AbortWithStatus(http.StatusInternalServerError)
 			return
 		}
 
@@ -52,7 +51,7 @@ func (c *Controller) RequestCode(ctx *gin.Context) {
 		})
 		if errCreate != nil {
 			log.Println("storage.CreateUser:", err)
-			ctx.Status(http.StatusInternalServerError)
+			ctx.AbortWithStatus(http.StatusInternalServerError)
 			return
 		}
 
@@ -63,7 +62,7 @@ func (c *Controller) RequestCode(ctx *gin.Context) {
 	err = c.sender.SendMessageToUserByAlias(ctx, user.Alias, "Привет! Кое-кто запросил код для входа: `111`")
 	if err != nil {
 		log.Println("sender.SendMessageToUserByAlias:", err)
-		ctx.Status(http.StatusInternalServerError)
+		ctx.AbortWithStatus(http.StatusInternalServerError)
 		return
 	}
 
@@ -90,7 +89,7 @@ func (c *Controller) Login(ctx *gin.Context) {
 	err := ctx.ShouldBindBodyWithJSON(&req)
 	if err != nil {
 		log.Println("error ShouldBindBodyWithJSON:", err)
-		ctx.Status(http.StatusBadRequest)
+		ctx.AbortWithStatus(http.StatusBadRequest)
 		return
 	}
 
@@ -107,14 +106,14 @@ func (c *Controller) Login(ctx *gin.Context) {
 	})
 	if err != nil {
 		log.Println("storage.GetUserByAlias:", err)
-		ctx.Status(http.StatusInternalServerError)
+		ctx.AbortWithStatus(http.StatusInternalServerError)
 		return
 	}
 
-	signetJWT, err := jwt.Sign(web.JWTUserIDKey, user.ID)
+	signetJWT, err := c.jwt.Sign(web.JWTUserIDKey, user.ID)
 	if err != nil {
 		log.Println("jwt.Sign:", err)
-		ctx.Status(http.StatusInternalServerError)
+		ctx.AbortWithStatus(http.StatusInternalServerError)
 		return
 	}
 

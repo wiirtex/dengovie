@@ -6,7 +6,7 @@ import (
 	"net/http"
 )
 
-func PanicCatcher(ctx *gin.Context) {
+func (s *service) PanicCatcher(ctx *gin.Context) {
 
 	defer func() {
 		if msg := recover(); msg != nil {

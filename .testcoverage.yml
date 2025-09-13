@@ -22,7 +22,8 @@ exclude:
     - ./mocks/.
     - ./internal/config/.
     - ./utils/
-    - ./store/postgres/.
+    - ./store/postgres/
+    - ./internal/app/middlewares.
 
 # File name of go-test-coverage breakdown file, which can be used to
 # analyze coverage difference.

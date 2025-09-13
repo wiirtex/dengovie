@@ -21,7 +21,8 @@ exclude:
     - \.pb\.go$    # excludes all protobuf generated files
     - ./mocks/.
     - ./internal/config/.
-    - ./utils/.
+    - ./utils/
+    - ./store/postgres/.
 
 # File name of go-test-coverage breakdown file, which can be used to
 # analyze coverage difference.

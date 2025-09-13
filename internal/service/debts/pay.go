@@ -36,8 +36,8 @@ func (s *Service) PayDebt(ctx context.Context, input debtsTypes.PayDebtInput) er
 		return fmt.Errorf("debt amount is greater than payAmount")
 	}
 
-	if payAmount < 0 {
-		return fmt.Errorf("debt amount is negative")
+	if payAmount <= 0 {
+		return fmt.Errorf("debt amount is non positive")
 	}
 
 	// Обновляем записи о долгах

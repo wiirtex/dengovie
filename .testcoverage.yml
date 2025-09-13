@@ -23,7 +23,7 @@ exclude:
     - ./internal/config/.
     - ./utils/
     - ./store/postgres/
-    - ./internal/app/middlewares/.
+    - ./app/middlewares/.
 
 # File name of go-test-coverage breakdown file, which can be used to
 # analyze coverage difference.

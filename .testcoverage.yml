@@ -25,6 +25,7 @@ exclude:
     - ./store/postgres/
     - ./app/middlewares/.
 
+
 # File name of go-test-coverage breakdown file, which can be used to
 # analyze coverage difference.
 breakdown-file-name: ''

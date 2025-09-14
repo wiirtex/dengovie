@@ -53,6 +53,7 @@ spec:
         app: db
         role: service
     spec:
+      automountServiceAccountToken: false
       containers:
         - name: db
           image: postgres:latest
@@ -79,6 +80,10 @@ spec:
           volumeMounts:
             - name: db
               mountPath: /var/lib/postgresql/data
+          resources:
+            limits:
+              memory: 1Gb
+              ephemeral-storage: "2Gi"
       volumes:
         - name: db
           persistentVolumeClaim:

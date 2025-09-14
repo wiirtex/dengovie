@@ -23,6 +23,7 @@ spec:
       labels:
         io.kompose.service: frontend
     spec:
+      automountServiceAccountToken: false
       containers:
         - image: wiirtex/dengovie-frontend:latest
           env:
@@ -32,4 +33,7 @@ spec:
           ports:
             - containerPort: 5173
               protocol: TCP
+          resources:
+            limits:
+              memory: 1Gb
       restartPolicy: Always

@@ -25,6 +25,7 @@ spec:
       labels:
         io.kompose.service: backend
     spec:
+      automountServiceAccountToken: false
       containers:
         - envFrom:
             - configMapRef:

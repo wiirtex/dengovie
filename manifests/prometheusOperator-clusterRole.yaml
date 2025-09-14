@@ -30,20 +30,19 @@ rules:
   - probes
   - prometheusrules
   verbs:
-  - '*'
+  - get
+  - list
 - apiGroups:
   - apps
   resources:
   - statefulsets
-  verbs:
-  - '*'
+  verbs: ['get', 'list']
 - apiGroups:
   - ""
   resources:
   - configmaps
   - secrets
-  verbs:
-  - '*'
+  verbs: ['get', 'list']
 - apiGroups:
   - ""
   resources:

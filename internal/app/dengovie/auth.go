@@ -13,6 +13,10 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+const (
+	replyRequestNewCode = "Привет! Кое-кто запросил код для входа: пока что тестовый ```111```"
+)
+
 // RequestCode godoc
 //
 //	@Summary      Запросить код для входа
@@ -59,7 +63,7 @@ func (c *Controller) RequestCode(ctx *gin.Context) {
 		return
 	}
 
-	err = c.sender.SendMessageToUserByAlias(ctx, user.Alias, "Привет! Кое-кто запросил код для входа: `111`")
+	err = c.sender.SendMessageToUserByAlias(ctx, user.Alias, replyRequestNewCode)
 	if err != nil {
 		log.Println("sender.SendMessageToUserByAlias:", err)
 		ctx.AbortWithStatus(http.StatusInternalServerError)

@@ -48,7 +48,7 @@ func TestController_RequestCode(t *testing.T) {
 				e.sender.EXPECT().SendMessageToUserByAlias(
 					mock.Anything,
 					"alias",
-					"Привет! Кое-кто запросил код для входа: `111`").
+					replyRequestNewCode).
 					Return(nil)
 
 				return ctx, w
@@ -175,7 +175,7 @@ func TestController_RequestCode(t *testing.T) {
 				e.sender.EXPECT().SendMessageToUserByAlias(
 					mock.Anything,
 					"alias",
-					"Привет! Кое-кто запросил код для входа: `111`").
+					replyRequestNewCode).
 					Return(assert.AnError) // Ошибка отправки
 
 				return ctx, w
@@ -242,7 +242,7 @@ func TestController_RequestCode(t *testing.T) {
 				e.sender.EXPECT().SendMessageToUserByAlias(
 					mock.Anything,
 					specialAlias,
-					"Привет! Кое-кто запросил код для входа: `111`").
+					replyRequestNewCode).
 					Return(nil)
 
 				return ctx, w
@@ -275,7 +275,7 @@ func TestController_RequestCode(t *testing.T) {
 				e.sender.EXPECT().SendMessageToUserByAlias(
 					mock.Anything,
 					longAlias,
-					"Привет! Кое-кто запросил код для входа: `111`").
+					replyRequestNewCode).
 					Return(nil)
 
 				return ctx, w
